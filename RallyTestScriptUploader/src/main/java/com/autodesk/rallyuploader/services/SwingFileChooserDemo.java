@@ -2,13 +2,11 @@ package com.autodesk.rallyuploader.services;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Insets;
 import java.io.File;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -20,7 +18,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
-
 import com.autodesk.rallyuploader.utils.Constants;
 
 public class SwingFileChooserDemo extends JPanel {
@@ -28,9 +25,9 @@ public class SwingFileChooserDemo extends JPanel {
 	JButton openButton, saveButton;
 	JTextArea log;
 	JFileChooser fc;
-	static JFrame frame;
+
 	public SwingFileChooserDemo() throws InterruptedException {
-		// super(new BorderLayout());
+		super(new BorderLayout());
 		log = new JTextArea(5, 20);
 		log.setBounds(3, 3, 300, 200);
 		add(log);
@@ -51,12 +48,9 @@ public class SwingFileChooserDemo extends JPanel {
 		filePicker.addFileTypeFilter(".xlsx", "Xlsx Files");
 		JFileChooser fileChooser = filePicker.getFileChooser();
 		fileChooser.setCurrentDirectory(new File("C:/"));
-		Container pane =frame.getContentPane();
-		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-
-		pane.add(logScrollPane);
-		pane.add(filePicker);
-		pane.add(testPane);
+		add(logScrollPane, BorderLayout.NORTH);
+		add(filePicker, BorderLayout.LINE_START);
+		add(testPane, BorderLayout.SOUTH);
 	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
@@ -69,12 +63,11 @@ public class SwingFileChooserDemo extends JPanel {
 			return null;
 		}
 	}
-	
 
 	private static void createAndShowGUI() throws InterruptedException {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
-		 frame = new JFrame("Rally File Test Script Uploader Utility");
+		JFrame frame = new JFrame("Rally File Test Script Uploader Utility");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JComponent newContentPane = new SwingFileChooserDemo();
 		newContentPane.setOpaque(true);
