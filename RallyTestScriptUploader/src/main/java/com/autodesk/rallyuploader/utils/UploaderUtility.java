@@ -20,7 +20,7 @@ import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.services.ReadExcelDataImpl;
 
 public class UploaderUtility {
-	ReadExcelData readExcelData;
+	private ReadExcelData readExcelData;
 
 	public static int getCountmathes(String data, String match) {
 		int count = 0;

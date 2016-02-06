@@ -8,7 +8,7 @@ public enum ResultStatusConstants {
 	FILE_NOT_FOUND_ERROR(1003),
 	ERROR_READING_FILE(1004),
 	FILE_EXISTS(1005),
-	CELL_LIMIT_EXCEEDED(1006),
+	CELL_DATA_LIMIT_EXCEEDED(1006),
 	DATA_TO_LARGE_TO_MANAGE(1007);
 	private int statusCode;
 	private ResultStatusConstants(final int resultStatusCode) {
