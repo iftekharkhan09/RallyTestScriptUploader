@@ -2,6 +2,8 @@ package com.autodesk.rallyuploader.entity;
 
 public class ExcelData {
 	private int testscenerioid;
+	private int rowno;
+	private int columnno;
 
 	public int getTestscenerioid() {
 		return testscenerioid;
@@ -10,9 +12,6 @@ public class ExcelData {
 	public void setTestscenerioid(int testscenerioid) {
 		this.testscenerioid = testscenerioid;
 	}
-
-	private int rowno;
-	private int columnno;
 
 	public int getRowno() {
 		return rowno;
