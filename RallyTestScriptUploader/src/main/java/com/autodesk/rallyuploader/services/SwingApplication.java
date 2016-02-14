@@ -18,6 +18,7 @@ import javax.swing.SwingConstants;
 import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,6 @@ import javax.swing.border.TitledBorder;
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
-import com.sun.corba.se.impl.activation.ProcessMonitorThread;
 
 import javax.swing.border.CompoundBorder;
 import javax.swing.UIManager;
@@ -86,6 +86,7 @@ public class SwingApplication {
 	private JFilePicker input_filepicker;
 	private Map<ExcelData, Object> static_data = new HashMap<ExcelData, Object>();
 	private JButton output_generator_button;
+	private JFileChooser fileChooser_Inputpath;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -451,8 +452,8 @@ public class SwingApplication {
 
 		input_filepicker.addFileTypeFilter(".xls", "Xls Files");
 		input_filepicker.addFileTypeFilter(".xlsx", "Xlsx Files");
-		final JFileChooser fileChooser = input_filepicker.getFileChooser();
-		fileChooser.setCurrentDirectory(new File("C:/"));
+		fileChooser_Inputpath = input_filepicker.getFileChooser();
+		fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
 		input_filepicker.setAlignmentX(SwingConstants.NORTH_WEST);
 		panel_3.add(input_filepicker);
 
@@ -462,19 +463,25 @@ public class SwingApplication {
 		panel_2.add(lblNewLabel);
 		panel_1.setLayout(gl_panel_1);
 		Font font = new Font("Verdana", Font.BOLD, 17);
-		// System.out.println(filePicker2.getInput_file_path());
-
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(fileChooser.getSelectedFile()
-						.getAbsolutePath());
-				if (fileChooser.getSelectedFile().getAbsolutePath() != null) {
-					String file_path=fileChooser.getSelectedFile().getAbsolutePath();
+				File[] files = fileChooser_Inputpath.getSelectedFiles();
+				if (files.length > 1) {
+					String file_path = fileChooser_Inputpath.getSelectedFile()
+							.getAbsolutePath();
+					System.out.println("Sunny");
 					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
 							file_path);
 					progressMonitoring.main(file_path);
 					Process_test_script.setEnabled(false);
 				} else {
+					String file_path = fileChooser_Inputpath.getSelectedFile()
+							.getAbsolutePath();
+					System.out.println("Sunny");
+					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
+							file_path);
+					progressMonitoring.main(file_path);
+					Process_test_script.setEnabled(false);
 				}
 
 			}
