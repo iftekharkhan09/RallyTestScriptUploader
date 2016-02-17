@@ -1,4 +1,5 @@
 package com.autodesk.rallyuploader.services;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -13,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -30,6 +34,7 @@ import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
@@ -62,6 +67,7 @@ public class SwingApplication {
 	private Map<ExcelData, Object> static_data = new HashMap<ExcelData, Object>();
 	private JButton output_generator_button;
 	private JFileChooser fileChooser_Inputpath;
+	private static List<String> excelheaderlist;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -69,8 +75,6 @@ public class SwingApplication {
 				try {
 					SwingApplication window = new SwingApplication();
 					window.frame.setVisible(true);
-					UIManager.setLookAndFeel(UIManager
-							.getSystemLookAndFeelClassName());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -262,9 +266,6 @@ public class SwingApplication {
 		Process_test_script = new JButton("Process test script");
 		Process_test_script.setFont(new Font("Verdana", Font.PLAIN, 15));
 		panel_5.add(Process_test_script);
-
-		// Process_test_script.addActionListener(this);
-
 		JLabel label = new JLabel("");
 		panel_5.add(label);
 		panel_4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -430,33 +431,30 @@ public class SwingApplication {
 		input_filepicker.addFileTypeFilter();
 		fileChooser_Inputpath = input_filepicker.getFileChooser();
 		fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
+		fileChooser_Inputpath.setAlignmentX(SwingConstants.CENTER);
+		fileChooser_Inputpath.setAlignmentY(SwingConstants.CENTER);
 		input_filepicker.setAlignmentX(SwingConstants.CENTER);
 		panel_3.add(input_filepicker);
 
-		JLabel lblNewLabel = new JLabel("\n" + Constants.welcome_message + "\n");
-		lblNewLabel.setFont(new Font("Verdana", Font.BOLD, 30));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_2.add(lblNewLabel);
+		JLabel welcome_message = new JLabel("\n" + Constants.welcome_message
+				+ "\n");
+		welcome_message.setFont(new Font("Verdana", Font.BOLD, 30));
+		welcome_message.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_2.add(welcome_message);
 		panel_1.setLayout(gl_panel_1);
 		Font font = new Font("Verdana", Font.BOLD, 17);
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File[] files = fileChooser_Inputpath.getSelectedFiles();
-				if (files.length > 1) {
+				if (files.length != 0) {
 					String file_path = fileChooser_Inputpath.getSelectedFile()
 							.getAbsolutePath();
-					System.out.println("Sunny");
 					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
 							file_path);
 					progressMonitoring.main(file_path);
 					Process_test_script.setEnabled(false);
 				} else {
-					String file_path = fileChooser_Inputpath.getSelectedFile()
-							.getAbsolutePath();
-					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
-							file_path);
-					progressMonitoring.main(file_path);
-					Process_test_script.setEnabled(false);
+
 				}
 
 			}
@@ -464,13 +462,14 @@ public class SwingApplication {
 		output_generator_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
-				String file = "C:\\finy.xlsx";
+				String file = "C:\\su.xlsx";
 				try {
+					writeExcelHeader();
 					ProcessStaticdata();
 					writeExcelDataImpl.writeFormatteddatatoExcel(static_data,
 							file);
+
 				} catch (RallyUploaderException | IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -486,11 +485,13 @@ public class SwingApplication {
 		testScripts_array.add(last_result_textfield.getText());
 		testScripts_array.add("");
 		testScripts_array.add("");
+		testScripts_array.add(notes_textfield.getText());
 		testScripts_array.add(owner_textfield.getText());
 		testScripts_array.add(userstory_textfield.getText());
 		testScripts_array.add(workproduct_textfield.getText());
 		testScripts_array.add("");
-		testScripts_array.add(type_textfield.getText());
+		testScripts_array.add("");// add the type textfield
+		// testScripts_array.add(type_textfield.getText());
 		testScripts_array.add(method_textField.getText());
 		testScripts_array.add(priority_textfield.getText());
 		testScripts_array.add(risk_textfield.getText());
@@ -500,9 +501,51 @@ public class SwingApplication {
 		testScripts_array.add("");
 		testScripts_array.add("");
 		testScripts_array.add(lastverdict_textfield.getText());
-
 		writexceldata();
 
+	}
+
+	public void excelHeaderProcessing() {
+		excelheaderlist = new ArrayList<String>();
+		excelheaderlist.add(Constants.display_color);
+		excelheaderlist.add(Constants.expedite);
+		excelheaderlist.add(Constants.ready);
+		excelheaderlist.add(Constants.last_result);
+		excelheaderlist.add(Constants.name);
+		excelheaderlist.add(Constants.description);
+		excelheaderlist.add(Constants.notes);
+		excelheaderlist.add(Constants.owner);
+		excelheaderlist.add(Constants.work_product);
+		excelheaderlist.add(Constants.objective);
+		excelheaderlist.add(Constants.type);
+		excelheaderlist.add(Constants.method);
+		excelheaderlist.add(Constants.priority);
+		excelheaderlist.add(Constants.risk);
+		excelheaderlist.add(Constants.packages);
+		excelheaderlist.add(Constants.pre_conditions);
+		excelheaderlist.add(Constants.post_conditions);
+		excelheaderlist.add(Constants.validation_input);
+		excelheaderlist.add(Constants.validation_expected_result);
+		excelheaderlist.add(Constants.last_verdict);
+		excelheaderlist.add(Constants.last_result);
+		excelheaderlist.add(Constants.last_run);
+
+	}
+
+	public void writeExcelHeader() throws RallyUploaderException, IOException {
+		int row = 0;
+		excelHeaderProcessing();
+		String FILE_PATH = "C:\\su.xlsx";
+		WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
+		for (int i = 0; i < excelheaderlist.size(); i++) {
+			ExcelData excelData = new ExcelData();
+			excelData.setRowno(row);
+			excelData.setColumnno(i);
+			String data = excelheaderlist.get(i);
+			static_data.put(excelData, data);
+		}
+
+		// writeExcelDataImpl.writeFormatteddatatoExcel(map, FILE_PATH);
 	}
 
 	public void writexceldata() throws RallyUploaderException, IOException {

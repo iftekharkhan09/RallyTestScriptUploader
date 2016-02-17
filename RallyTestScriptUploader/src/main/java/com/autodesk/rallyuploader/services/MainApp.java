@@ -22,8 +22,6 @@ public class MainApp {
 	public static void main(String[] args) throws RallyUploaderException,
 			IOException, InterruptedException {
 		MainApp mainApp = new MainApp();
-		SwingFileChooserDemo swingFileChooserDemo=new SwingFileChooserDemo();
-		swingFileChooserDemo.main(null);
 		
 	}
 
