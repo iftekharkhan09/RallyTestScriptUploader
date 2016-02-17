@@ -18,14 +18,14 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-public class WriteExcelDataImpl implements WriteExcelData{
-	public  void writeFormatteddatatoExcel(Map<ExcelData, Object> map, String FILE_PATH)
-			throws RallyUploaderException, IOException {
+public class WriteExcelDataImpl implements WriteExcelData {
+	public void writeFormatteddatatoExcel(Map<ExcelData, Object> map,
+			String FILE_PATH) throws RallyUploaderException, IOException {
 		Workbook workbook = new XSSFWorkbook();
 		File file = new File(FILE_PATH);
 		Row row = null;
 		FileOutputStream fos = null;
-		Sheet sheet = workbook.createSheet(Constants.sheetname);
+		Sheet sheet = workbook.createSheet(Constants.sheet_name_output_script);
 		Iterator it = map.entrySet().iterator();
 		try {
 			while (it.hasNext()) {
@@ -46,7 +46,8 @@ public class WriteExcelDataImpl implements WriteExcelData{
 				Row row1 = sheet.getRow(rowno);
 				if (value.length() >= 32767) {
 					System.out.println(Constants.cell_limit_exceeded);
-					System.out.println("cell address - " + excelData.getRowno() + " " + excelData.getColumnno());
+					System.out.println("cell address - " + excelData.getRowno()
+							+ " " + excelData.getColumnno());
 
 				} else
 					c.setCellValue(value);
@@ -59,9 +60,11 @@ public class WriteExcelDataImpl implements WriteExcelData{
 			try {
 				fos.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(ResultStatusConstants.ERROR_CLOSING_FILE, Constants.fileclosingerror);
+				throw new RallyUploaderException(
+						ResultStatusConstants.ERROR_CLOSING_FILE,
+						Constants.fileclosing_error);
 			}
 		}
-		System.out.println(Constants.sucess + FILE_PATH);
+		System.out.println(Constants.success + FILE_PATH);
 	}
 }

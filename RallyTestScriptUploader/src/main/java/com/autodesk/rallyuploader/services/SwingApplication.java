@@ -1,59 +1,38 @@
 package com.autodesk.rallyuploader.services;
-
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
-
-import javax.swing.JFrame;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-
-import javax.swing.SwingConstants;
-
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.JFileChooser;
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
-
-import javax.swing.border.CompoundBorder;
-import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
-import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
-import javax.swing.DropMode;
-
-import java.awt.TextField;
-import java.awt.Button;
-
-import javax.swing.JButton;
-
-import java.awt.CardLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-
-import java.awt.Label;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class SwingApplication {
 	private static int static_column = 0;
@@ -62,24 +41,20 @@ public class SwingApplication {
 	private JTextField expedite_textfield;
 	private JTextField ready_textfield;
 	private JTextField last_result_textfield;
-	private JTextField notes_textfield;
 	private JTextField owner_textfield;
+	private JTextField userstory_textfield;
 	private JTextField workproduct_textfield;
+	private JTextField notes_textfield;
 	private JTextField type_textfield;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
-	private JTextField textField_11;
-	private JTextField textField_12;
-	private JTextField textField_13;
-	private JTextField textField_14;
-	private JTextField textField_15;
-	private JTextField textField_16;
-	private JTextField textField_17;
-	private JTextField textField_18;
-	private JTextField textField_19;
-	private JTextField textField_20;
-	private String input_filepath;
+	private JTextField method_textField;
+	private JTextField priority_textfield;
+	private JTextField risk_textfield;
+	private JTextField package_textfield;
+	private JTextField precondition_textfield;
+	private JTextField postcondition_textfield;
+	private JTextField lastverdict_textfield;
+	private JTextField last_build_textfield;
+	private JTextField last_run_textfield;
 	public JButton Process_test_script;
 	private ArrayList<String> testScripts_array;
 	private JFilePicker output_filepicker;
@@ -94,6 +69,8 @@ public class SwingApplication {
 				try {
 					SwingApplication window = new SwingApplication();
 					window.frame.setVisible(true);
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -108,7 +85,7 @@ public class SwingApplication {
 	private void initialize() {
 
 		frame = new JFrame();
-		frame.setBounds(100, 100, 853, 736);
+		frame.setBounds(100, 100, 915, 736);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(
 				new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
@@ -332,28 +309,28 @@ public class SwingApplication {
 		lblNewLabel_6.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_6);
 
-		notes_textfield = new JTextField();
-		notes_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(notes_textfield);
-		notes_textfield.setColumns(20);
+		owner_textfield = new JTextField();
+		owner_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(owner_textfield);
+		owner_textfield.setColumns(20);
 
 		JLabel lblNewLabel_7 = new JLabel("User Story:");
 		lblNewLabel_7.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_7);
 
-		owner_textfield = new JTextField();
-		owner_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(owner_textfield);
-		owner_textfield.setColumns(8);
+		userstory_textfield = new JTextField();
+		userstory_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(userstory_textfield);
+		userstory_textfield.setColumns(8);
 
 		JLabel lblNewLabel_5 = new JLabel("Notes:");
 		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_5);
 
-		workproduct_textfield = new JTextField();
-		workproduct_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(workproduct_textfield);
-		workproduct_textfield.setColumns(27);
+		notes_textfield = new JTextField();
+		notes_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(notes_textfield);
+		notes_textfield.setColumns(27);
 
 		JLabel lblNewLabel_8 = new JLabel("Type:");
 		lblNewLabel_8.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -368,93 +345,92 @@ public class SwingApplication {
 		lblNewLabel_9.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_9);
 
-		textField_8 = new JTextField();
-		textField_8.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_8);
-		textField_8.setColumns(8);
+		method_textField = new JTextField();
+		method_textField.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(method_textField);
+		method_textField.setColumns(8);
 
 		JLabel lblNewLabel_11 = new JLabel("Priority:");
 		lblNewLabel_11.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_11);
 
-		textField_12 = new JTextField();
-		textField_12.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_12);
-		textField_12.setColumns(8);
+		priority_textfield = new JTextField();
+		priority_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(priority_textfield);
+		priority_textfield.setColumns(8);
 
 		JLabel lblNewLabel_10 = new JLabel("Risk:");
 		lblNewLabel_10.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_10);
 
-		textField_13 = new JTextField();
-		textField_13.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_13);
-		textField_13.setColumns(8);
+		risk_textfield = new JTextField();
+		risk_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(risk_textfield);
+		risk_textfield.setColumns(8);
 
 		JLabel lblNewLabel_12 = new JLabel("Package:");
 		lblNewLabel_12.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_12);
 
-		textField_14 = new JTextField();
-		textField_14.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_14);
-		textField_14.setColumns(8);
+		package_textfield = new JTextField();
+		package_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(package_textfield);
+		package_textfield.setColumns(8);
 
 		JLabel lblNewLabel_13 = new JLabel("Pre Conditions:");
 		lblNewLabel_13.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_13);
 
-		textField_15 = new JTextField();
-		textField_15.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_15);
-		textField_15.setColumns(25);
+		precondition_textfield = new JTextField();
+		precondition_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(precondition_textfield);
+		precondition_textfield.setColumns(25);
 
 		JLabel lblNewLabel_14 = new JLabel("Post Conditions:");
 		lblNewLabel_14.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_14);
 
-		textField_16 = new JTextField();
-		textField_16.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_16);
-		textField_16.setColumns(25);
+		postcondition_textfield = new JTextField();
+		postcondition_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(postcondition_textfield);
+		postcondition_textfield.setColumns(25);
 
 		JLabel lblNewLabel_15 = new JLabel("Last Verdict:");
 		lblNewLabel_15.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_15);
 
-		textField_17 = new JTextField();
-		textField_17.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_17);
-		textField_17.setColumns(16);
+		lastverdict_textfield = new JTextField();
+		lastverdict_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(lastverdict_textfield);
+		lastverdict_textfield.setColumns(16);
 
 		JLabel lblNewLabel_16 = new JLabel("Last Build:");
 		lblNewLabel_16.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_16);
 
-		textField_18 = new JTextField();
-		textField_18.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_18);
-		textField_18.setColumns(16);
+		last_build_textfield = new JTextField();
+		last_build_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(last_build_textfield);
+		last_build_textfield.setColumns(16);
 
 		JLabel lblNewLabel_17 = new JLabel("Last Run:");
 		lblNewLabel_17.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_17);
 
-		textField_19 = new JTextField();
-		textField_19.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(textField_19);
-		textField_19.setColumns(16);
+		last_run_textfield = new JTextField();
+		last_run_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(last_run_textfield);
+		last_run_textfield.setColumns(16);
 
 		input_filepicker = new JFilePicker(Constants.test_script_path,
 				"Browse...");
 		input_filepicker.setBorder(new LineBorder(Color.DARK_GRAY, 2, true));
 		input_filepicker.setMode(JFilePicker.MODE_OPEN);
 
-		input_filepicker.addFileTypeFilter(".xls", "Xls Files");
-		input_filepicker.addFileTypeFilter(".xlsx", "Xlsx Files");
+		input_filepicker.addFileTypeFilter();
 		fileChooser_Inputpath = input_filepicker.getFileChooser();
 		fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
-		input_filepicker.setAlignmentX(SwingConstants.NORTH_WEST);
+		input_filepicker.setAlignmentX(SwingConstants.CENTER);
 		panel_3.add(input_filepicker);
 
 		JLabel lblNewLabel = new JLabel("\n" + Constants.welcome_message + "\n");
@@ -477,7 +453,6 @@ public class SwingApplication {
 				} else {
 					String file_path = fileChooser_Inputpath.getSelectedFile()
 							.getAbsolutePath();
-					System.out.println("Sunny");
 					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
 							file_path);
 					progressMonitoring.main(file_path);
@@ -511,10 +486,21 @@ public class SwingApplication {
 		testScripts_array.add(last_result_textfield.getText());
 		testScripts_array.add("");
 		testScripts_array.add("");
-		testScripts_array.add(notes_textfield.getText());
 		testScripts_array.add(owner_textfield.getText());
+		testScripts_array.add(userstory_textfield.getText());
 		testScripts_array.add(workproduct_textfield.getText());
 		testScripts_array.add("");
+		testScripts_array.add(type_textfield.getText());
+		testScripts_array.add(method_textField.getText());
+		testScripts_array.add(priority_textfield.getText());
+		testScripts_array.add(risk_textfield.getText());
+		testScripts_array.add(package_textfield.getText());
+		testScripts_array.add("");
+		testScripts_array.add("");
+		testScripts_array.add("");
+		testScripts_array.add("");
+		testScripts_array.add(lastverdict_textfield.getText());
+
 		writexceldata();
 
 	}

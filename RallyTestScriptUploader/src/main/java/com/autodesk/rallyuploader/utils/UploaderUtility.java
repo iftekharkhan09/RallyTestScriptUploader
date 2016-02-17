@@ -21,6 +21,7 @@ import com.autodesk.rallyuploader.services.ReadExcelDataImpl;
 
 public class UploaderUtility {
 	private ReadExcelData readExcelData;
+	private static  String full_path_of_input_file;
 
 	public static int getCountmathes(String data, String match) {
 		int count = 0;
@@ -180,5 +181,9 @@ public class UploaderUtility {
 					ResultStatusConstants.NON_INCREASING_TEST_SCENERIO_ID,
 					Constants.non_decreasing_id);
 		}
+	}
+	public static int getTotalnoofcellls(String filename){
+		full_path_of_input_file=filename;
+		return getNoofcolumns(full_path_of_input_file)*getNoofRows(full_path_of_input_file);
 	}
 }
