@@ -23,7 +23,7 @@ public interface Constants {
 	final String final_test_script_path = "Please select the output test script";
 	final String file_processing = "Processing the cells in the excel sheet....";
 	final String unable_to_create_file = "Unable to create the output file in the path specified";
-	final String cell_limit_exceeded = "The Length Of the below Cell is more than what is supported by .xls,.xlsx and csv files.Please break the Test Scenerio.";
+	final String cell_limit_exceeded = "The length Of the below cell is more than what is supported by .xls,.xlsx and csv files.Please break the Test Scenerio.";
 	final String unable_to_write_data = "Unable to write the data into the output file!!";
 	final String display_color = "Display Color";
 	final String expedite = "Expedite";
