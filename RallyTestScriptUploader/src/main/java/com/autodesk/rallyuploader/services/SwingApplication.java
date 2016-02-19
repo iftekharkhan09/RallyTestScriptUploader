@@ -1,6 +1,7 @@
 package com.autodesk.rallyuploader.services;
 
 import java.awt.Color;
+
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -10,17 +11,19 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,6 +41,8 @@ import javax.swing.border.TitledBorder;
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
+
+import javax.swing.JInternalFrame;
 
 public class SwingApplication {
 	private static int static_column = 0;
@@ -131,7 +136,7 @@ public class SwingApplication {
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1
 				.setHorizontalGroup(gl_panel_1
-						.createParallelGroup(Alignment.LEADING)
+						.createParallelGroup(Alignment.TRAILING)
 						.addGroup(
 								gl_panel_1.createSequentialGroup().addGap(39)
 										.addComponent(lblNewLabel_19)
@@ -150,51 +155,46 @@ public class SwingApplication {
 																		.addGap(10)
 																		.addComponent(
 																				lblNewLabel_20))
-														.addGroup(
-																gl_panel_1
-																		.createSequentialGroup()
-																		.addGroup(
-																				gl_panel_1
-																						.createParallelGroup(
-																								Alignment.LEADING)
-																						.addComponent(
-																								panel_6,
-																								GroupLayout.DEFAULT_SIZE,
-																								1001,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								panel_7,
-																								GroupLayout.DEFAULT_SIZE,
-																								GroupLayout.DEFAULT_SIZE,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								panel_3,
-																								GroupLayout.DEFAULT_SIZE,
-																								1001,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								panel_2,
-																								GroupLayout.DEFAULT_SIZE,
-																								1001,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								panel_5,
-																								GroupLayout.DEFAULT_SIZE,
-																								1001,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								panel_4,
-																								Alignment.TRAILING,
-																								GroupLayout.PREFERRED_SIZE,
-																								1001,
-																								Short.MAX_VALUE))
-																		.addContainerGap())))
+														.addComponent(
+																panel_6,
+																GroupLayout.DEFAULT_SIZE,
+																1001,
+																Short.MAX_VALUE)
+														.addComponent(
+																panel_7,
+																GroupLayout.DEFAULT_SIZE,
+																GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE)
+														.addComponent(
+																panel_3,
+																GroupLayout.DEFAULT_SIZE,
+																1001,
+																Short.MAX_VALUE)
+														.addComponent(
+																panel_2,
+																GroupLayout.DEFAULT_SIZE,
+																1001,
+																Short.MAX_VALUE)
+														.addComponent(
+																panel_5,
+																GroupLayout.DEFAULT_SIZE,
+																1001,
+																Short.MAX_VALUE)
+														.addComponent(
+																panel_4,
+																Alignment.TRAILING,
+																GroupLayout.PREFERRED_SIZE,
+																1001,
+																Short.MAX_VALUE))
+										.addContainerGap())
 						.addGroup(
-								Alignment.TRAILING,
-								gl_panel_1.createSequentialGroup()
-										.addContainerGap(457, Short.MAX_VALUE)
-										.addComponent(output_generator_button)
-										.addGap(428)));
+								gl_panel_1
+										.createSequentialGroup()
+										.addGap(457)
+										.addComponent(output_generator_button,
+												GroupLayout.DEFAULT_SIZE,
+												GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE).addGap(428)));
 		gl_panel_1.setVerticalGroup(gl_panel_1.createParallelGroup(
 				Alignment.LEADING).addGroup(
 				gl_panel_1
@@ -223,7 +223,7 @@ public class SwingApplication {
 						.addComponent(lblNewLabel_19)
 						.addPreferredGap(ComponentPlacement.RELATED)
 						.addComponent(lblNewLabel_20)
-						.addContainerGap(71, Short.MAX_VALUE)));
+						.addContainerGap(45, Short.MAX_VALUE)));
 		panel_6.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		output_filepicker = new JFilePicker(Constants.final_test_script_path,
@@ -237,13 +237,25 @@ public class SwingApplication {
 		gbl_panel_7.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		panel_7.setLayout(gbl_panel_7);
 
-		Label label_1 = new Label("New label");
-		GridBagConstraints gbc_label_1 = new GridBagConstraints();
-		gbc_label_1.gridwidth = 2;
-		gbc_label_1.insets = new Insets(0, 0, 0, 5);
-		gbc_label_1.gridx = 0;
-		gbc_label_1.gridy = 0;
-		panel_7.add(label_1, gbc_label_1);
+		// Label Alert_Label = new Label("New label");
+		BufferedImage myPicture = null;
+		try {
+			myPicture = ImageIO
+					.read(new File("src/main/resources/download.png"));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		JLabel Alert_Label = new JLabel(new ImageIcon(myPicture));
+		// add(Alert_Label);
+
+		Alert_Label.setForeground(new Color(0, 0, 0));
+		GridBagConstraints gbc_Alert_Label = new GridBagConstraints();
+		gbc_Alert_Label.gridwidth = 2;
+		gbc_Alert_Label.insets = new Insets(0, 0, 0, 5);
+		gbc_Alert_Label.gridx = 0;
+		gbc_Alert_Label.gridy = 0;
+		panel_7.add(Alert_Label, gbc_Alert_Label);
 
 		JTextArea txtrItIsRecommended = new JTextArea();
 		txtrItIsRecommended.setFont(new Font("Monospaced", Font.ITALIC, 15));
@@ -490,8 +502,7 @@ public class SwingApplication {
 		testScripts_array.add(userstory_textfield.getText());
 		testScripts_array.add(workproduct_textfield.getText());
 		testScripts_array.add("");
-		testScripts_array.add("");// add the type textfield
-		// testScripts_array.add(type_textfield.getText());
+		testScripts_array.add("");
 		testScripts_array.add(method_textField.getText());
 		testScripts_array.add(priority_textfield.getText());
 		testScripts_array.add(risk_textfield.getText());
@@ -561,5 +572,4 @@ public class SwingApplication {
 		}
 
 	}
-
 }
