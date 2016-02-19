@@ -1,14 +1,12 @@
 package com.autodesk.rallyuploader.services;
 
 import java.awt.Color;
-
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -16,9 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -41,6 +40,7 @@ import javax.swing.border.TitledBorder;
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
+import com.autodesk.rallyuploader.utils.UploaderUtility;
 
 import javax.swing.JInternalFrame;
 
@@ -459,23 +459,27 @@ public class SwingApplication extends ReadExcelDataImpl {
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File[] files = fileChooser_Inputpath.getSelectedFiles();
-				//if (files.length != 0) {
-					/*input_file_path = fileChooser_Inputpath.getSelectedFile()
-							.getAbsolutePath();*/
-				String input_file_path="C:\\input_file.xlsx";
-					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
-							input_file_path);
-					progressMonitoring.main(input_file_path);
-					Process_test_script.setEnabled(false);
-					ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-					try {
-						readExcelDataImpl.saveExceldata(input_file_path);
-					} catch (RallyUploaderException | IOException e1) {
-						e1.printStackTrace();
-					//}
-				}/* else {
-
-				}*/
+				// if (files.length != 0) {
+				/*
+				 * input_file_path = fileChooser_Inputpath.getSelectedFile()
+				 * .getAbsolutePath();
+				 */
+				String input_file_path = "C:\\input_file.xlsx";
+				ProgressMonitoring progressMonitoring = new ProgressMonitoring(
+						input_file_path);
+				progressMonitoring.main(input_file_path);
+				Process_test_script.setEnabled(false);
+				ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+				try {
+					readExcelDataImpl.saveExceldata(input_file_path);
+				} catch (RallyUploaderException | IOException e1) {
+					e1.printStackTrace();
+					// }
+				}/*
+				 * else {
+				 * 
+				 * }
+				 */
 
 			}
 		});
@@ -483,12 +487,12 @@ public class SwingApplication extends ReadExcelDataImpl {
 			public void actionPerformed(ActionEvent e) {
 				WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
 				String file = "C:\\su.xlsx";
+				String filename = "C:\\input_file.xlsx";
 				try {
 					writeExcelHeader();
-					ProcessStaticdata();
+					ProcessStaticdata(filename);
 					writeExcelDataImpl.writeFormatteddatatoExcel(static_data,
 							file);
-
 				} catch (RallyUploaderException | IOException e1) {
 					e1.printStackTrace();
 				}
@@ -497,7 +501,8 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 	}
 
-	public void ProcessStaticdata() throws RallyUploaderException, IOException {
+	public void ProcessStaticdata(String filename)
+			throws RallyUploaderException, IOException {
 		testScripts_array = new ArrayList<String>();
 		testScripts_array.add(display_color_textfield.getText());
 		testScripts_array.add(expedite_textfield.getText());
@@ -520,7 +525,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 		testScripts_array.add("");
 		testScripts_array.add("");
 		testScripts_array.add(lastverdict_textfield.getText());
-		writexceldata();
+		writexceldata(filename);
 
 	}
 
@@ -565,13 +570,18 @@ public class SwingApplication extends ReadExcelDataImpl {
 		}
 	}
 
-	public void writexceldata() throws RallyUploaderException, IOException {
+	public void writexceldata(String filename) throws RallyUploaderException,
+			IOException {
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
+		alltestsceneriosid_list = readExcelDataImpl
+				.getAllTestsceneriosId(filename);
+		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
+		nonduplicatedsceneriodid_list = UploaderUtility
+				.getNonduplicatedId(alltestsceneriosid_list);
 		for (int i = 0; i < testScripts_array.size(); i++) {
 			String data = testScripts_array.get(i);
-			ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-			List<Integer> list = new ArrayList<Integer>();
-			list = readExcelDataImpl.getAggregatedlist();
-			for (int j = 1; j <= list.size(); j++) {
+			for (int j = 1; j <= nonduplicatedsceneriodid_list.size(); j++) {
 				ExcelData excelData = new ExcelData();
 				excelData.setRowno(j);
 				excelData.setColumnno(static_column);

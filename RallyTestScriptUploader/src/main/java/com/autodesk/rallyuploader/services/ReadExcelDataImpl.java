@@ -22,45 +22,6 @@ import com.autodesk.rallyuploader.exeption.*;
 import com.autodesk.rallyuploader.utils.*;
 
 public class ReadExcelDataImpl implements ReadExcelData {
-
-	private List<Integer> alltestsceneriosid_list;
-	private List<Integer> testidfrequency_list;
-	private List<Integer> aggregatedlist;
-	private Set<Integer> nonduplicatedsceneriodid_list;
-
-	public Set<Integer> getNonduplicatedsceneriodid_list() {
-		return nonduplicatedsceneriodid_list;
-	}
-
-	public void setNonduplicatedsceneriodid_list(
-			Set<Integer> nonduplicatedsceneriodid_list) {
-		this.nonduplicatedsceneriodid_list = nonduplicatedsceneriodid_list;
-	}
-
-	public List<Integer> getAlltestsceneriosid_list() {
-		return alltestsceneriosid_list;
-	}
-
-	public void setAlltestsceneriosid_list(List<Integer> alltestsceneriosid_list) {
-		this.alltestsceneriosid_list = alltestsceneriosid_list;
-	}
-
-	public List<Integer> getTestidfrequency_list() {
-		return testidfrequency_list;
-	}
-
-	public void setTestidfrequency_list(List<Integer> testidfrequency_list) {
-		this.testidfrequency_list = testidfrequency_list;
-	}
-
-	public List<Integer> getAggregatedlist() {
-		return aggregatedlist;
-	}
-
-	public void setAggregatedlist(List<Integer> aggregatedlist) {
-		this.aggregatedlist = aggregatedlist;
-	}
-
 	public ArrayList<Integer> getAllTestsceneriosId(String filename)
 			throws RallyUploaderException {
 		FileInputStream fis = null;
@@ -121,19 +82,15 @@ public class ReadExcelDataImpl implements ReadExcelData {
 					ResultStatusConstants.ERROR_READING_FILE,
 					Constants.error_reading_file);
 		}
-		setAlltestsceneriosid_list(alltestsceneriosid_list);
 		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
-
-		setNonduplicatedsceneriodid_list(nonduplicatedsceneriodid_list);
 		List<Integer> testidfrequency_list = new ArrayList<Integer>();
 		testidfrequency_list = UploaderUtility
 				.getTestIdfrequency(alltestsceneriosid_list);
 		List<Integer> aggregatedlist = new ArrayList<Integer>();
 		aggregatedlist = UploaderUtility
 				.getAggregatedarray(testidfrequency_list);
-		setAggregatedlist(aggregatedlist);
 		FileInputStream fis = null;
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		try {
@@ -216,26 +173,20 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		Map<ExcelData, Object> final_map = new HashMap<ExcelData, Object>();
 		if (file.exists()) {
 			System.out.println(Constants.file_processing);
-			alltestsceneriosid_list = new ArrayList<Integer>();
-			
-			
-			alltestsceneriosid_list = getAggregatedlist();
-			
-
-			Iterator<Integer> it=alltestsceneriosid_list.iterator();
-			while(it.hasNext())
-			{
-				System.out.println(it.next());
-			}
-			
+			List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
+			alltestsceneriosid_list = readExcelDataImpl
+					.getAllTestsceneriosId(filename);
 			Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
-			nonduplicatedsceneriodid_list = getNonduplicatedsceneriodid_list();
-			testidfrequency_list = new ArrayList<Integer>();
-			testidfrequency_list = getTestidfrequency_list();
+			nonduplicatedsceneriodid_list = UploaderUtility
+					.getNonduplicatedId(alltestsceneriosid_list);
+			List<Integer> testidfrequency_list = new ArrayList<Integer>();
+			testidfrequency_list = UploaderUtility
+					.getTestIdfrequency(alltestsceneriosid_list);
 			List<Integer> list1 = new ArrayList<Integer>();
 			list1 = testidfrequency_list;
-			aggregatedlist = new ArrayList<Integer>();
-			aggregatedlist = getAggregatedlist();
+			List<Integer> aggregatedlist = new ArrayList<Integer>();
+			aggregatedlist = UploaderUtility
+					.getAggregatedarray(testidfrequency_list);
 
 			int no_of_rows = UploaderUtility.getNoofRows(filename);
 			int no_of_columns = UploaderUtility.getNoofcolumns(filename) - 2;
@@ -285,5 +236,8 @@ public class ReadExcelDataImpl implements ReadExcelData {
 					ResultStatusConstants.FILE_NOT_FOUND_ERROR,
 					Constants.input_file_not_found);
 		System.out.println(Constants.final_test_script_path);
+		// String mod_file = in.next();
+		// writeExcelData.writeFormatteddatatoExcel(final_map, outputfile);
+
 	}
 }
