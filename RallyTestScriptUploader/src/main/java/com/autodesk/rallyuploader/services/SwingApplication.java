@@ -44,7 +44,7 @@ import com.autodesk.rallyuploader.utils.Constants;
 
 import javax.swing.JInternalFrame;
 
-public class SwingApplication {
+public class SwingApplication extends ReadExcelDataImpl {
 	private static int static_column = 0;
 	private JFrame frame;
 	private JTextField display_color_textfield;
@@ -73,6 +73,7 @@ public class SwingApplication {
 	private JButton output_generator_button;
 	private JFileChooser fileChooser_Inputpath;
 	private static List<String> excelheaderlist;
+	private String input_file_path;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -458,16 +459,23 @@ public class SwingApplication {
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File[] files = fileChooser_Inputpath.getSelectedFiles();
-				if (files.length != 0) {
-					String file_path = fileChooser_Inputpath.getSelectedFile()
-							.getAbsolutePath();
+				//if (files.length != 0) {
+					/*input_file_path = fileChooser_Inputpath.getSelectedFile()
+							.getAbsolutePath();*/
+				String input_file_path="C:\\input_file.xlsx";
 					ProgressMonitoring progressMonitoring = new ProgressMonitoring(
-							file_path);
-					progressMonitoring.main(file_path);
+							input_file_path);
+					progressMonitoring.main(input_file_path);
 					Process_test_script.setEnabled(false);
-				} else {
+					ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+					try {
+						readExcelDataImpl.saveExceldata(input_file_path);
+					} catch (RallyUploaderException | IOException e1) {
+						e1.printStackTrace();
+					//}
+				}/* else {
 
-				}
+				}*/
 
 			}
 		});
@@ -555,14 +563,15 @@ public class SwingApplication {
 			String data = excelheaderlist.get(i);
 			static_data.put(excelData, data);
 		}
-
-		// writeExcelDataImpl.writeFormatteddatatoExcel(map, FILE_PATH);
 	}
 
 	public void writexceldata() throws RallyUploaderException, IOException {
 		for (int i = 0; i < testScripts_array.size(); i++) {
 			String data = testScripts_array.get(i);
-			for (int j = 1; j < 14; j++) {
+			ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+			List<Integer> list = new ArrayList<Integer>();
+			list = readExcelDataImpl.getAggregatedlist();
+			for (int j = 1; j <= list.size(); j++) {
 				ExcelData excelData = new ExcelData();
 				excelData.setRowno(j);
 				excelData.setColumnno(static_column);
