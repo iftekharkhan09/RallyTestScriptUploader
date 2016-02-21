@@ -8,24 +8,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.*;
 import com.autodesk.rallyuploader.utils.*;
 
 public class ReadExcelDataImpl implements ReadExcelData {
-	public ArrayList<Integer> getAllTestsceneriosId(String filename)
+	public int getCellHeaderColumn(String filename, String column_value)
 			throws RallyUploaderException {
 		FileInputStream fis = null;
-		int numberOfColumn = 0;
+		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
+		int i = 0;
+		int j = 0;
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		try {
 			fis = new FileInputStream(new File(filename));
@@ -33,27 +41,65 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			XSSFSheet sheet = myWorkBook.getSheetAt(0);
 			Row row = null;
 			Cell cell = null;
-			Iterator rowIterator = sheet.rowIterator();
+			XSSFRow header_row = sheet.getRow(0);
+			for (i = 0; i < numberOfColumn; i++) {
+				XSSFCell header_cell = header_row.getCell(i);
+				String header = header_cell.getStringCellValue();
+				System.out.println("header value" + header);
+				if (header.equalsIgnoreCase(column_value)) {
+					j = i + 1;
+					return j;
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				throw new RallyUploaderException(
+						ResultStatusConstants.ERROR_CLOSING_FILE,
+						Constants.fileclosing_error);
+			}
+		}
+		return j;
+	}
+
+	public ArrayList<Integer> getAllTestsceneriosId(String filename)
+			throws RallyUploaderException {
+		FileInputStream fis = null;
+		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		try {
+			fis = new FileInputStream(new File(filename));
+			XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
+			XSSFSheet sheet = myWorkBook.getSheetAt(0);
+			Row row = null;
+			Cell cell = null;
 			numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 			Iterator rows = sheet.iterator();
+			ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+			int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
+					Constants.test_scenerio_condition) - 1;
 			while (rows.hasNext()) {
 				row = (Row) rows.next();
-				if (row != null) {
-					String key = null;
-					for (int colIndex = 0; colIndex < numberOfColumn; colIndex++) {
-						if (colIndex == 0) {
-							cell = row.getCell(colIndex);
-							if (cell != null) {
-								key = cell.getStringCellValue();
-								int index = key
-										.indexOf(Constants.testscenerio_identifier);
-								String testscenerio = key.substring(index + 3,
-										key.length());
-								String id = testscenerio.replaceAll(
-										Constants.space, "");
-								int testscenerioid = Integer.parseInt(id);
-								list.add(testscenerioid);
-							}
+				if (row.getRowNum() == 0 || row == null) {
+					continue;
+				}
+				String key = null;
+				for (int colIndex = 0; colIndex < numberOfColumn; colIndex++) {
+					if (colIndex == column_no) {
+						cell = row.getCell(colIndex);
+						if (cell != null) {
+							key = cell.getStringCellValue();
+							int index = key
+									.indexOf(Constants.testscenerio_identifier);
+							String testscenerio = key.substring(index + 3,
+									key.length());
+							String id = testscenerio.replaceAll(
+									Constants.space, "");
+							int testscenerioid = Integer.parseInt(id);
+							list.add(testscenerioid);
 						}
 					}
 				}
@@ -235,9 +281,87 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			throw new RallyUploaderException(
 					ResultStatusConstants.FILE_NOT_FOUND_ERROR,
 					Constants.input_file_not_found);
-		System.out.println(Constants.final_test_script_path);
-		// String mod_file = in.next();
-		// writeExcelData.writeFormatteddatatoExcel(final_map, outputfile);
-
+		Map<Integer, String> map = saveAlltestSceneiosdata(filename);
 	}
+
+	public Map<Integer, String> saveAlltestSceneiosdata(String filename)
+			throws RallyUploaderException {
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
+		alltestsceneriosid_list = readExcelDataImpl
+				.getAllTestsceneriosId(filename);
+		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
+		nonduplicatedsceneriodid_list = UploaderUtility
+				.getNonduplicatedId(alltestsceneriosid_list);
+		List<Integer> testidfrequency_list = new ArrayList<Integer>();
+		testidfrequency_list = UploaderUtility
+				.getTestIdfrequency(alltestsceneriosid_list);
+		List<Integer> list1 = new ArrayList<Integer>();
+		list1 = testidfrequency_list;
+		List<Integer> aggregatedlist = new ArrayList<Integer>();
+		aggregatedlist = UploaderUtility
+				.getAggregatedarray(testidfrequency_list);
+		List<Integer> agg_list = new ArrayList<Integer>();
+		agg_list.add(0, 1);
+		for (int i = 0; i < aggregatedlist.size() - 1; i++) {
+			agg_list.add(aggregatedlist.get(i) + 2);
+		}
+		List<Integer> nonduplicatesceneriosid_list = new ArrayList<Integer>();
+		Iterator<Integer> it = nonduplicatedsceneriodid_list.iterator();
+		while (it.hasNext()) {
+			nonduplicatesceneriosid_list.add(it.next());
+		}
+
+		FileInputStream fis = null;
+		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
+		Set<String> set = new LinkedHashSet<String>();
+		try {
+			fis = new FileInputStream(new File(filename));
+			XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
+			XSSFSheet sheet = myWorkBook.getSheetAt(0);
+			Row row = null;
+			Cell cell = null;
+			numberOfColumn = UploaderUtility.getNoofcolumns(filename);
+			Iterator rows = sheet.iterator();
+			int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
+					Constants.Test_Scenario) - 1;
+			while (rows.hasNext()) {
+				row = (Row) rows.next();
+				if (row.getRowNum() == 0 || row == null) {
+					continue;
+				}
+				String key = null;
+				for (int colIndex = 0; colIndex < numberOfColumn; colIndex++) {
+					if (colIndex == column_no) {
+						cell = row.getCell(colIndex);
+						if (cell != null) {
+							key = cell.getStringCellValue();
+							set.add(key);
+						}
+					}
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				throw new RallyUploaderException(
+						ResultStatusConstants.ERROR_CLOSING_FILE,
+						Constants.fileclosing_error);
+			}
+		}
+		List<String> set_values = new ArrayList<String>();
+		Iterator<String> itt = set.iterator();
+		while (itt.hasNext()) {
+			set_values.add(itt.next());
+		}
+		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
+		for (int i = 0; i < nonduplicatedsceneriodid_list.size(); i++) {
+			map.put(nonduplicatesceneriosid_list.get(i), set_values.get(i));
+		}
+		return map;
+	}
+
 }

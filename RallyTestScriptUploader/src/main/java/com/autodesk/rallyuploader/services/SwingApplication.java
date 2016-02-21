@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -42,8 +45,6 @@ import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
 import com.autodesk.rallyuploader.utils.UploaderUtility;
 
-import javax.swing.JInternalFrame;
-
 public class SwingApplication extends ReadExcelDataImpl {
 	private static int static_column = 0;
 	private JFrame frame;
@@ -53,9 +54,8 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private JTextField last_result_textfield;
 	private JTextField owner_textfield;
 	private JTextField userstory_textfield;
-	private JTextField workproduct_textfield;
-	private JTextField notes_textfield;
 	private JTextField type_textfield;
+	private JTextField notes_textfield;
 	private JTextField method_textField;
 	private JTextField priority_textfield;
 	private JTextField risk_textfield;
@@ -71,6 +71,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private JFilePicker input_filepicker;
 	private Map<ExcelData, Object> static_data = new HashMap<ExcelData, Object>();
 	private JButton output_generator_button;
+	private JFileChooser filechooser_outputpath;
 	private JFileChooser fileChooser_Inputpath;
 	private static List<String> excelheaderlist;
 	private String input_file_path;
@@ -113,7 +114,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 		JPanel panel_3 = new JPanel();
 
 		JPanel panel_4 = new JPanel();
-		panel_4.setToolTipText("Note: It is recommended to the enter the corresponding values for the above fields if the values as same fo most of the test scenerios.Otherwise,you can insert the values in the output excel sheet generated.");
 		panel_4.setBorder(new CompoundBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"),
 				"Please Enter the below details", TitledBorder.LEADING,
@@ -131,6 +131,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 		panel_6.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 
 		output_generator_button = new JButton("Generate Output Script\r\n");
+
 		JLabel lblNewLabel_19 = new JLabel("");
 
 		JLabel lblNewLabel_20 = new JLabel("New label");
@@ -229,6 +230,16 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		output_filepicker = new JFilePicker(Constants.final_test_script_path,
 				"Browse...");
+		// output_filepicker.setBorder(new LineBorder(Color.DARK_GRAY, 2,
+		// true));
+		output_filepicker.setMode(JFilePicker.MODE_OPEN);
+		output_filepicker.addFileTypeFilter();
+		filechooser_outputpath = output_filepicker.getFileChooser();
+		filechooser_outputpath.setCurrentDirectory(new File("C:/"));
+		filechooser_outputpath.setAlignmentX(SwingConstants.CENTER);
+		filechooser_outputpath.setAlignmentY(SwingConstants.CENTER);
+		output_filepicker.setAlignmentX(SwingConstants.CENTER);
+
 		panel_6.add(output_filepicker);
 		GridBagLayout gbl_panel_7 = new GridBagLayout();
 		gbl_panel_7.columnWidths = new int[] { 0, 0, 0, 0 };
@@ -261,8 +272,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 		JTextArea txtrItIsRecommended = new JTextArea();
 		txtrItIsRecommended.setFont(new Font("Monospaced", Font.ITALIC, 15));
 		txtrItIsRecommended.setLineWrap(true);
-		txtrItIsRecommended
-				.setText("It is recommended to enter the values in the above fields,if the values are same for most of the test scenerios.You can also create/modify the values in the output excel sheet. ");
+		txtrItIsRecommended.setText(Constants.recommendation);
 		GridBagConstraints gbc_txtrItIsRecommended = new GridBagConstraints();
 		gbc_txtrItIsRecommended.fill = GridBagConstraints.BOTH;
 		gbc_txtrItIsRecommended.gridx = 2;
@@ -350,10 +360,10 @@ public class SwingApplication extends ReadExcelDataImpl {
 		lblNewLabel_8.setFont(new Font("Verdana", Font.PLAIN, 30));
 		panel_4.add(lblNewLabel_8);
 
-		workproduct_textfield = new JTextField();
-		workproduct_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		panel_4.add(workproduct_textfield);
-		workproduct_textfield.setColumns(8);
+		type_textfield = new JTextField();
+		type_textfield.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		panel_4.add(type_textfield);
+		type_textfield.setColumns(8);
 
 		JLabel lblNewLabel_9 = new JLabel("Method:");
 		lblNewLabel_9.setFont(new Font("Verdana", Font.PLAIN, 30));
@@ -458,44 +468,54 @@ public class SwingApplication extends ReadExcelDataImpl {
 		Font font = new Font("Verdana", Font.BOLD, 17);
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File[] files = fileChooser_Inputpath.getSelectedFiles();
-				// if (files.length != 0) {
-				/*
-				 * input_file_path = fileChooser_Inputpath.getSelectedFile()
-				 * .getAbsolutePath();
-				 */
-				String input_file_path = "C:\\input_file.xlsx";
+				// File[] files = fileChooser_Inputpath.getSelectedFiles();
+
+				input_file_path = fileChooser_Inputpath.getSelectedFile()
+						.getAbsolutePath();
 				ProgressMonitoring progressMonitoring = new ProgressMonitoring(
 						input_file_path);
 				progressMonitoring.main(input_file_path);
+
 				Process_test_script.setEnabled(false);
 				ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
 				try {
-					readExcelDataImpl.saveExceldata(input_file_path);
-				} catch (RallyUploaderException | IOException e1) {
+					Map<Integer, String> maps = new HashMap<Integer, String>();
+					maps = readExcelDataImpl
+							.saveAlltestSceneiosdata(input_file_path);
+					decriptive(maps, input_file_path);
+				} catch (RallyUploaderException e1) {
 					e1.printStackTrace();
-					// }
-				}/*
-				 * else {
-				 * 
-				 * }
-				 */
+				}
 
 			}
 		});
 		output_generator_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
-				String file = "C:\\su.xlsx";
-				String filename = "C:\\input_file.xlsx";
-				try {
-					writeExcelHeader();
-					ProcessStaticdata(filename);
-					writeExcelDataImpl.writeFormatteddatatoExcel(static_data,
-							file);
-				} catch (RallyUploaderException | IOException e1) {
-					e1.printStackTrace();
+				String output_file_path = filechooser_outputpath
+						.getSelectedFile().getAbsolutePath();
+				String input_file_path = fileChooser_Inputpath
+						.getSelectedFile().getAbsolutePath();
+				if (input_file_path != null && output_file_path != null) {
+					try {
+						writeExcelHeader();
+						ProcessStaticdata(input_file_path);
+						writeExcelDataImpl.writeFormatteddatatoExcel(
+								static_data, output_file_path);
+
+					} catch (RallyUploaderException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} else {
+					if (input_file_path == null) {
+						System.out.println("Please enter the Input File Path");
+					} else if (output_file_path == null) {
+						System.out.println("Please enter the Output File Path");
+					}
 				}
+
 			}
 		});
 
@@ -513,20 +533,20 @@ public class SwingApplication extends ReadExcelDataImpl {
 		testScripts_array.add(notes_textfield.getText());
 		testScripts_array.add(owner_textfield.getText());
 		testScripts_array.add(userstory_textfield.getText());
-		testScripts_array.add(workproduct_textfield.getText());
 		testScripts_array.add("");
-		testScripts_array.add("");
+		testScripts_array.add(type_textfield.getText());// type
 		testScripts_array.add(method_textField.getText());
 		testScripts_array.add(priority_textfield.getText());
 		testScripts_array.add(risk_textfield.getText());
 		testScripts_array.add(package_textfield.getText());
-		testScripts_array.add("");
-		testScripts_array.add("");
+		testScripts_array.add(precondition_textfield.getText());
+		testScripts_array.add(postcondition_textfield.getText());
 		testScripts_array.add("");
 		testScripts_array.add("");
 		testScripts_array.add(lastverdict_textfield.getText());
+		testScripts_array.add(last_build_textfield.getText());
+		testScripts_array.add(last_run_textfield.getText());
 		writexceldata(filename);
-
 	}
 
 	public void excelHeaderProcessing() {
@@ -553,13 +573,11 @@ public class SwingApplication extends ReadExcelDataImpl {
 		excelheaderlist.add(Constants.last_verdict);
 		excelheaderlist.add(Constants.last_result);
 		excelheaderlist.add(Constants.last_run);
-
 	}
 
 	public void writeExcelHeader() throws RallyUploaderException, IOException {
 		int row = 0;
 		excelHeaderProcessing();
-		String FILE_PATH = "C:\\su.xlsx";
 		WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
 		for (int i = 0; i < excelheaderlist.size(); i++) {
 			ExcelData excelData = new ExcelData();
@@ -579,16 +597,66 @@ public class SwingApplication extends ReadExcelDataImpl {
 		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
+		Iterator<Integer> it = nonduplicatedsceneriodid_list.iterator();
 		for (int i = 0; i < testScripts_array.size(); i++) {
 			String data = testScripts_array.get(i);
-			for (int j = 1; j <= nonduplicatedsceneriodid_list.size(); j++) {
-				ExcelData excelData = new ExcelData();
-				excelData.setRowno(j);
-				excelData.setColumnno(static_column);
-				static_data.put(excelData, data);
+			if (data != "") {
+				for (int j = 1; j <= nonduplicatedsceneriodid_list.size(); j++) {
+					ExcelData excelData = new ExcelData();
+					excelData.setRowno(j);
+					excelData.setColumnno(static_column);
+					static_data.put(excelData, data);
+				}
 			}
 			static_column++;
 		}
-
 	}
+
+	public void decriptive(Map<Integer, String> map, String filename)
+			throws RallyUploaderException {
+		Map<Integer, String> mapped_data = new LinkedHashMap<Integer, String>();
+		mapped_data = map;
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
+		alltestsceneriosid_list = readExcelDataImpl
+				.getAllTestsceneriosId(filename);
+		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
+		nonduplicatedsceneriodid_list = UploaderUtility
+				.getNonduplicatedId(alltestsceneriosid_list);
+		// adding the name values
+		int row_name = 1;
+		int name_column = 4;
+		for (Map.Entry<Integer, String> entry : mapped_data.entrySet()) {
+			ExcelData excelData = new ExcelData();
+			excelData.setRowno(row_name);
+			excelData.setColumnno(name_column);
+			String data=Constants.Test_Scenerio_sepator;
+			String ext_data=data.concat(entry.getKey().toString());
+			String extra_data=ext_data.concat("_");
+			String final_data=extra_data.concat(entry.getValue());
+			static_data.put(excelData, final_data);
+			row_name++;
+		}
+		// adding the description values
+		int row_description = 1;
+		int description_column = 5;
+		for (Map.Entry<Integer, String> entry : map.entrySet()) {
+			ExcelData excelData = new ExcelData();
+			excelData.setRowno(row_description);
+			excelData.setColumnno(description_column);
+			static_data.put(excelData, entry.getValue());
+			row_description++;
+		}
+		// adding the description values
+		int objective_description = 1;
+		int objective_column = 9;
+		for (Map.Entry<Integer, String> entry : map.entrySet()) {
+			ExcelData excelData = new ExcelData();
+			excelData.setRowno(objective_description);
+			excelData.setColumnno(objective_column);
+			static_data.put(excelData, entry.getValue());
+			objective_description++;
+		}
+	}
+
 }

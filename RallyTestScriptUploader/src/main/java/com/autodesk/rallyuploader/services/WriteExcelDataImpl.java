@@ -21,6 +21,13 @@ import java.util.Map;
 public class WriteExcelDataImpl implements WriteExcelData {
 	public void writeFormatteddatatoExcel(Map<ExcelData, Object> map,
 			String FILE_PATH) throws RallyUploaderException, IOException {
+
+		for (Map.Entry<ExcelData, Object> entry : map.entrySet()) {
+			System.out.println("Key = " + entry.getKey().getRowno() + " "
+					+ entry.getKey().getColumnno() + ", Value = "
+					+ entry.getValue().toString());
+		}
+
 		Workbook workbook = new XSSFWorkbook();
 		File file = new File(FILE_PATH);
 		Row row = null;

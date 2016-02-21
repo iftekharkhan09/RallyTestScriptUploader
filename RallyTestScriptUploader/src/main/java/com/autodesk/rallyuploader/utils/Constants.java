@@ -25,6 +25,7 @@ public interface Constants {
 	final String unable_to_create_file = "Unable to create the output file in the path specified";
 	final String cell_limit_exceeded = "The length Of the below cell is more than what is supported by .xls,.xlsx and csv files.Please break the Test Scenerio.";
 	final String unable_to_write_data = "Unable to write the data into the output file!!";
+	final String recommendation = "Note: It is recommended to the enter the corresponding values for the above fields if the values as same for most of the test scenerios.Otherwise,you can insert the values in the output excel sheet generated.";
 	final String display_color = "Display Color";
 	final String expedite = "Expedite";
 	final String ready = "Ready";
@@ -47,4 +48,9 @@ public interface Constants {
 	final String last_verdict = "Last Verdict";
 	final String last_build = "Last Build";
 	final String last_run = "Last Run";
+	final String sheetname = "Input Test Script";
+	final String test_scenerio_condition = "Test Scenario ID";
+	final String test_condition_id = "Test Condition ID";
+	final String Test_Scenario="Test Scenario";
+	final String Test_Scenerio_sepator="TS_";
 }

@@ -16,8 +16,8 @@ public class ProgressMonitoring extends JFrame implements ActionListener {
 	public ProgressMonitoring(String file_path) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pbar = new ProgressMonitor(null, "Monitoring Progress",
-				"Initializing . . .", 0, getTotalnoofcells(file_path));
-		Timer timer = new Timer(500, this);
+				"Initializing . . .", 0,100);
+		Timer timer = new Timer(1, this);
 		timer.start();
 	}
 
