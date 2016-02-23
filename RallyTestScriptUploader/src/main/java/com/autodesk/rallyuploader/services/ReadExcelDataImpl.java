@@ -13,16 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.omg.PortableInterceptor.INACTIVE;
-
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.*;
 import com.autodesk.rallyuploader.utils.*;
@@ -45,7 +41,6 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			for (i = 0; i < numberOfColumn; i++) {
 				XSSFCell header_cell = header_row.getCell(i);
 				String header = header_cell.getStringCellValue();
-				System.out.println("header value" + header);
 				if (header.equalsIgnoreCase(column_value)) {
 					j = i + 1;
 					return j;
@@ -155,15 +150,20 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			List<String> array = new ArrayList<String>();
 			int no_of_columns = UploaderUtility.getNoofcolumns(filename);
 			int no_of_rows = UploaderUtility.getNoofRows(filename);
-			for (int l = 2; l < no_of_columns; l++) {
-				int counter1 = 0;
+			int test_steps_column_no = getCellHeaderColumn(filename,
+					Constants.Test_Steps) - 1;
+			int test_condition_column_no = getCellHeaderColumn(filename,
+					Constants.test_condition_id) - 1;
+			for (int l = 3; l < 5; l++) {
+				int counter1 = 1;
 				for (int i = counter1; i < no_of_rows; i++) {
 					String header = new String();
 					String cell_concatvalue = new String();
 					String header_builder = new String();
 					Row r = sheet.getRow(i);
 					Cell c = r.getCell(l, Row.RETURN_BLANK_AS_NULL);
-					Cell header_cell = r.getCell(1, Row.CREATE_NULL_AS_BLANK);
+					Cell header_cell = r.getCell(test_condition_column_no,
+							Row.CREATE_NULL_AS_BLANK);
 					String cell_value = c.getStringCellValue();
 					header = header_cell.getStringCellValue();
 					header_builder = header.concat(Constants.below_line);
@@ -211,14 +211,12 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		return final_String;
 	}
 
-	public void saveExceldata(String filename) throws RallyUploaderException,
-			IOException {
+	public Map<ExcelData, Object> saveExceldata(String filename)
+			throws RallyUploaderException, IOException {
 		File file = new File(filename);
 		ReadExcelData readExcelDataImpl = new ReadExcelDataImpl();
-		WriteExcelData writeExcelData = new WriteExcelDataImpl();
 		Map<ExcelData, Object> final_map = new HashMap<ExcelData, Object>();
 		if (file.exists()) {
-			System.out.println(Constants.file_processing);
 			List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
 			alltestsceneriosid_list = readExcelDataImpl
 					.getAllTestsceneriosId(filename);
@@ -233,9 +231,6 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			List<Integer> aggregatedlist = new ArrayList<Integer>();
 			aggregatedlist = UploaderUtility
 					.getAggregatedarray(testidfrequency_list);
-
-			int no_of_rows = UploaderUtility.getNoofRows(filename);
-			int no_of_columns = UploaderUtility.getNoofcolumns(filename) - 2;
 			List<Integer> start_index_data = new ArrayList<Integer>();
 			List<Integer> end_index_data = new ArrayList<Integer>();
 
@@ -243,16 +238,14 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			start_index_data = uploaderUtility.getStartIndex(filename);
 			end_index_data = uploaderUtility.getEndIndex(filename);
 			List<String> final_array = new ArrayList<String>();
-
 			for (int i = 0; i < start_index_data.size(); i++) {
-
 				String arr = new String();
 				arr = readExcelDataImpl.mergeCelldata(start_index_data.get(i),
 						end_index_data.get(i), filename);
 				final_array.add(arr);
 			}
-			int row = 0;
-			int col = 1;
+			int row = 1;
+			int col = 17;
 			ExcelData excelData = new ExcelData();
 			excelData.setColumnno(col);
 			excelData.setRowno(row);
@@ -260,7 +253,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			for (int i = 1; i < final_array.size(); i++) {
 				if (((i) % aggregatedlist.size()) == 0) {
 					col++;
-					row = 0;
+					row = 1;
 				} else
 					row++;
 				ExcelData excelData2 = new ExcelData();
@@ -268,20 +261,11 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				excelData2.setColumnno(col);
 				final_map.put(excelData2, final_array.get(i));
 			}
-			int fixed_row = 0;
-			for (int z : nonduplicatedsceneriodid_list) {
-				ExcelData excelData3 = new ExcelData();
-				excelData3.setRowno(fixed_row);
-				excelData3.setColumnno(0);
-				final_map.put(excelData3, z);
-				fixed_row++;
-			}
-
 		} else
 			throw new RallyUploaderException(
 					ResultStatusConstants.FILE_NOT_FOUND_ERROR,
 					Constants.input_file_not_found);
-		Map<Integer, String> map = saveAlltestSceneiosdata(filename);
+		return final_map;
 	}
 
 	public Map<Integer, String> saveAlltestSceneiosdata(String filename)
@@ -290,7 +274,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
 		alltestsceneriosid_list = readExcelDataImpl
 				.getAllTestsceneriosId(filename);
-		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
+		Set<Integer> nonduplicatedsceneriodid_list = new LinkedHashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
 		List<Integer> testidfrequency_list = new ArrayList<Integer>();

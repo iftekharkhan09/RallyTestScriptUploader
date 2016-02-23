@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import com.autodesk.rallyuploader.services.ReadExcelDataImpl;
 
 public class UploaderUtility {
 	private ReadExcelData readExcelData;
-	private static  String full_path_of_input_file;
+	private static String full_path_of_input_file;
 
 	public static int getCountmathes(String data, String match) {
 		int count = 0;
@@ -98,8 +99,7 @@ public class UploaderUtility {
 	}
 
 	public static Set<Integer> getNonduplicatedId(List<Integer> list) {
-		Set<Integer> set = new HashSet<Integer>();
-		List<Integer> Sortedlist = new ArrayList<Integer>();
+		Set<Integer> set = new LinkedHashSet<Integer>();
 		set.addAll(list);
 		return set;
 	}
@@ -117,12 +117,13 @@ public class UploaderUtility {
 					Constants.error_reading_file);
 		}
 
-		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
+		Set<Integer> nonduplicatedsceneriodid_list = new LinkedHashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
 		List<Integer> testidfrequency_list = new ArrayList<Integer>();
 		testidfrequency_list = UploaderUtility
 				.getTestIdfrequency(alltestsceneriosid_list);
+
 		List<Integer> aggregatedlist = new ArrayList<Integer>();
 		aggregatedlist = UploaderUtility
 				.getAggregatedarray(testidfrequency_list);
@@ -134,19 +135,18 @@ public class UploaderUtility {
 		}
 		int limit = aggregatedlist.size();
 		for (int x = 1; x < limit; x++) {
-			start_index.add(start_index.get(x) + no_of_rows);
+			start_index.add(start_index.get(x) + no_of_rows - 1);
 		}
 		return start_index;
 	}
-
 	public List<Integer> getEndIndex(String filename)
 			throws RallyUploaderException {
 		UploaderUtility uploaderUtility = new UploaderUtility();
 		List<Integer> start_index_list = new ArrayList<Integer>();
 		start_index_list = getStartIndex(filename);
 		List<Integer> end_index = new ArrayList<Integer>();
-		int total_no_of_cells = (getNoofcolumns(filename) - 2)
-				* getNoofRows(filename);
+		ReadExcelDataImpl readExcelDataImpl=new ReadExcelDataImpl();
+		int total_no_of_cells=readExcelDataImpl.getAllcelldata(filename).size();
 		for (int i = 0; i < start_index_list.size(); i++) {
 			if (i == start_index_list.size() - 1) {
 				end_index.add(total_no_of_cells - 1);
@@ -182,8 +182,10 @@ public class UploaderUtility {
 					Constants.non_decreasing_id);
 		}
 	}
-	public static int getTotalnoofcellls(String filename){
-		full_path_of_input_file=filename;
-		return getNoofcolumns(full_path_of_input_file)*getNoofRows(full_path_of_input_file);
+
+	public static int getTotalnoofcellls(String filename) {
+		full_path_of_input_file = filename;
+		return getNoofcolumns(full_path_of_input_file)
+				* getNoofRows(full_path_of_input_file);
 	}
 }

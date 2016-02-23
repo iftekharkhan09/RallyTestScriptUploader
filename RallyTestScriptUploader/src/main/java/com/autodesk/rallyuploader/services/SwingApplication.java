@@ -230,8 +230,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		output_filepicker = new JFilePicker(Constants.final_test_script_path,
 				"Browse...");
-		// output_filepicker.setBorder(new LineBorder(Color.DARK_GRAY, 2,
-		// true));
 		output_filepicker.setMode(JFilePicker.MODE_OPEN);
 		output_filepicker.addFileTypeFilter();
 		filechooser_outputpath = output_filepicker.getFileChooser();
@@ -465,28 +463,30 @@ public class SwingApplication extends ReadExcelDataImpl {
 		welcome_message.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_2.add(welcome_message);
 		panel_1.setLayout(gl_panel_1);
-		Font font = new Font("Verdana", Font.BOLD, 17);
+
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// File[] files = fileChooser_Inputpath.getSelectedFiles();
+				if (e.getActionCommand().equals("Process test script")) {
+					input_file_path = fileChooser_Inputpath.getSelectedFile()
+							.getAbsolutePath();
+					ProgressMonitoring.main(input_file_path);
+					Process_test_script.setEnabled(false);
+					ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+					try {
+						Map<Integer, String> maps = new LinkedHashMap<Integer, String>();
+						maps = readExcelDataImpl
+								.saveAlltestSceneiosdata(input_file_path);
+						decriptive(maps, input_file_path);
+						Map<ExcelData, Object> data = new HashMap<ExcelData, Object>();
+						data = readExcelDataImpl.saveExceldata(input_file_path);
+						static_data.putAll(data);
+					} catch (RallyUploaderException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 
-				input_file_path = fileChooser_Inputpath.getSelectedFile()
-						.getAbsolutePath();
-				ProgressMonitoring progressMonitoring = new ProgressMonitoring(
-						input_file_path);
-				progressMonitoring.main(input_file_path);
-
-				Process_test_script.setEnabled(false);
-				ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-				try {
-					Map<Integer, String> maps = new HashMap<Integer, String>();
-					maps = readExcelDataImpl
-							.saveAlltestSceneiosdata(input_file_path);
-					decriptive(maps, input_file_path);
-				} catch (RallyUploaderException e1) {
-					e1.printStackTrace();
 				}
-
 			}
 		});
 		output_generator_button.addActionListener(new ActionListener() {
@@ -616,13 +616,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 			throws RallyUploaderException {
 		Map<Integer, String> mapped_data = new LinkedHashMap<Integer, String>();
 		mapped_data = map;
-		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
-		alltestsceneriosid_list = readExcelDataImpl
-				.getAllTestsceneriosId(filename);
-		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
-		nonduplicatedsceneriodid_list = UploaderUtility
-				.getNonduplicatedId(alltestsceneriosid_list);
 		// adding the name values
 		int row_name = 1;
 		int name_column = 4;
@@ -630,10 +623,10 @@ public class SwingApplication extends ReadExcelDataImpl {
 			ExcelData excelData = new ExcelData();
 			excelData.setRowno(row_name);
 			excelData.setColumnno(name_column);
-			String data=Constants.Test_Scenerio_sepator;
-			String ext_data=data.concat(entry.getKey().toString());
-			String extra_data=ext_data.concat("_");
-			String final_data=extra_data.concat(entry.getValue());
+			String data = Constants.Test_Scenerio_sepator;
+			String ext_data = data.concat(entry.getKey().toString());
+			String extra_data = ext_data.concat("_");
+			String final_data = extra_data.concat(entry.getValue());
 			static_data.put(excelData, final_data);
 			row_name++;
 		}

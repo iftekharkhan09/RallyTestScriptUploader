@@ -53,4 +53,5 @@ public interface Constants {
 	final String test_condition_id = "Test Condition ID";
 	final String Test_Scenario="Test Scenario";
 	final String Test_Scenerio_sepator="TS_";
+	final String Test_Steps="Test Steps";
 }

@@ -1,14 +1,13 @@
 package com.autodesk.rallyuploader.services;
-
-import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 
 import javax.swing.*;
 
 import com.autodesk.rallyuploader.utils.UploaderUtility;
 
-public class ProgressMonitoring extends JFrame implements ActionListener {
-
+public class ProgressMonitoring extends JFrame implements ActionListener,Serializable {
+	private static final long serialVersionUID = -5825843675744860162L;
 	static ProgressMonitor pbar;
 	static int counter = 0;
 	private String file_path;
@@ -21,7 +20,7 @@ public class ProgressMonitoring extends JFrame implements ActionListener {
 		timer.start();
 	}
 
-	public void main(String file_path) {
+	public static void main(String file_path) {
 		UIManager.put("ProgressMonitor.progressText", "Data progressing");
 		UIManager.put("OptionPane.cancelButtonText", "Cancel");
 		new ProgressMonitoring(file_path);
