@@ -16,7 +16,7 @@ public class ProgressMonitoring extends JFrame implements ActionListener,Seriali
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pbar = new ProgressMonitor(null, "Monitoring Progress",
 				"Initializing . . .", 0,100);
-		Timer timer = new Timer(1, this);
+		Timer timer = new Timer(100, this);
 		timer.start();
 	}
 
@@ -43,8 +43,16 @@ public class ProgressMonitoring extends JFrame implements ActionListener,Seriali
 	}
 
 	public int getTotalnoofcells(String file_path) {
-		this.file_path = file_path;
+		this.setFile_path(file_path);
 		return UploaderUtility.getTotalnoofcellls(file_path);
 
+	}
+
+	public String getFile_path() {
+		return file_path;
+	}
+
+	public void setFile_path(String file_path) {
+		this.file_path = file_path;
 	}
 }

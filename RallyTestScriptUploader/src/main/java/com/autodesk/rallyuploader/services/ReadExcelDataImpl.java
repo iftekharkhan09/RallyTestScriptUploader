@@ -326,7 +326,9 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			ExceptionHandler exceptionHandler=new ExceptionHandler();
+			int row_length=exceptionHandler.getRowlength(ex.toString());
+			int col_length=exceptionHandler.getColumnlength(ex.toString());
 		} finally {
 			try {
 				fis.close();

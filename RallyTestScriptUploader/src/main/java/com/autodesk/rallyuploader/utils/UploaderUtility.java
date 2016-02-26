@@ -11,11 +11,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.services.ReadExcelDataImpl;
@@ -139,14 +137,16 @@ public class UploaderUtility {
 		}
 		return start_index;
 	}
+
 	public List<Integer> getEndIndex(String filename)
 			throws RallyUploaderException {
 		UploaderUtility uploaderUtility = new UploaderUtility();
 		List<Integer> start_index_list = new ArrayList<Integer>();
 		start_index_list = getStartIndex(filename);
 		List<Integer> end_index = new ArrayList<Integer>();
-		ReadExcelDataImpl readExcelDataImpl=new ReadExcelDataImpl();
-		int total_no_of_cells=readExcelDataImpl.getAllcelldata(filename).size();
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		int total_no_of_cells = readExcelDataImpl.getAllcelldata(filename)
+				.size();
 		for (int i = 0; i < start_index_list.size(); i++) {
 			if (i == start_index_list.size() - 1) {
 				end_index.add(total_no_of_cells - 1);

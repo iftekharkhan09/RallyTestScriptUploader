@@ -15,8 +15,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class JFilePicker extends JPanel implements Serializable{
 	private static final long serialVersionUID = 4559968042398599025L;
-	private String textFieldLabel;
-	private String buttonLabel;
 	private JLabel file_label;
 	private JTextField textField;
 	private JButton button;
@@ -26,8 +24,6 @@ public class JFilePicker extends JPanel implements Serializable{
 	public static final int MODE_SAVE = 2;
 
 	public JFilePicker(String textFieldLabel, String buttonLabel) {
-		this.textFieldLabel = textFieldLabel;
-		this.buttonLabel = buttonLabel;
 		fileChooser = new JFileChooser();
 		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		file_label = new JLabel(textFieldLabel);

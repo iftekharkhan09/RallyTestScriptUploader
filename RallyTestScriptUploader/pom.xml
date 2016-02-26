@@ -35,9 +35,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<excludes>
+					<!-- <excludes>
 						<exclude>**/log4j.properties</exclude>
-					</excludes>
+					</excludes> -->
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
@@ -89,11 +89,11 @@
 			<artifactId>xmlbeans</artifactId>
 			<version>2.6.0</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.5</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
