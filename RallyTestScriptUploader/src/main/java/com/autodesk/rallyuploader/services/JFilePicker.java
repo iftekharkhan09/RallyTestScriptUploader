@@ -40,7 +40,7 @@ public class JFilePicker extends JPanel implements Serializable{
 				try {
 					buttonActionPerformed(evt);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					ExceptionHandler.main(e.toString());
 				}
 			}
 		});

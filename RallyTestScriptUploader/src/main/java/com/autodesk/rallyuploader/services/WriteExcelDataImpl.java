@@ -1,5 +1,6 @@
 package com.autodesk.rallyuploader.services;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,14 +14,18 @@ import com.autodesk.rallyuploader.utils.ResultStatusConstants;
 import com.autodesk.rallyuploader.utils.WriteExcelData;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
 public class WriteExcelDataImpl implements WriteExcelData {
+	static Logger logger = Logger
+			.getLogger(com.autodesk.rallyuploader.services.WriteExcelDataImpl.class);
+
 	public void writeFormatteddatatoExcel(Map<ExcelData, Object> map,
-			String FILE_PATH) throws RallyUploaderException, IOException {
+			String FILE_PATH) {
 		Workbook workbook = new XSSFWorkbook();
 		File file = new File(FILE_PATH);
 		Row row = null;
@@ -52,19 +57,34 @@ public class WriteExcelDataImpl implements WriteExcelData {
 				} else
 					c.setCellValue(value);
 			}
-			fos = new FileOutputStream(FILE_PATH);
-			workbook.write(fos);
+			try {
+				fos = new FileOutputStream(FILE_PATH);
+			} catch (FileNotFoundException e) {
+
+				ExceptionHandler.main(e.toString());
+			}
+			try {
+				workbook.write(fos);
+			} catch (IOException e) {
+				logger.error(e);
+				ExceptionHandler.main(e.toString());
+			}
 		}
 
 		finally {
 			try {
 				fos.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(
-						ResultStatusConstants.ERROR_CLOSING_FILE,
-						Constants.fileclosing_error);
+				try {
+					throw new RallyUploaderException(
+							ResultStatusConstants.ERROR_CLOSING_FILE,
+							Constants.fileclosing_error);
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		}
-		System.out.println(Constants.success + FILE_PATH);
+		logger.info(Constants.success + FILE_PATH);
 	}
 }

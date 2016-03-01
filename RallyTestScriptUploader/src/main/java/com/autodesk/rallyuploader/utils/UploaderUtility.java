@@ -11,14 +11,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
+import com.autodesk.rallyuploader.services.ExceptionHandler;
 import com.autodesk.rallyuploader.services.ReadExcelDataImpl;
 
 public class UploaderUtility {
+	static Logger logger = Logger
+			.getLogger(com.autodesk.rallyuploader.utils.UploaderUtility.class);
 	private ReadExcelData readExcelData;
 	private static String full_path_of_input_file;
 
@@ -32,8 +35,7 @@ public class UploaderUtility {
 		return count;
 	}
 
-	public static boolean isArraynondecresing(List<Integer> arrayList)
-			throws RallyUploaderException {
+	public static boolean isArraynondecresing(List<Integer> arrayList) {
 		for (int i = 0; i < arrayList.size() - 1; i++) {
 			if (arrayList.get(i) > arrayList.get(i + 1)) {
 				return false;
@@ -45,9 +47,12 @@ public class UploaderUtility {
 	public static List<Integer> getAggregatedarray(List<Integer> list) {
 		List<Integer> list1 = new ArrayList<Integer>();
 		list1 = list;
-
-		for (int i = 1; i < list1.size(); i++) {
-			list1.set(i, list1.get(i - 1) + list1.get(i));
+		try {
+			for (int i = 1; i < list1.size(); i++) {
+				list1.set(i, list1.get(i - 1) + list1.get(i));
+			}
+		} catch (Exception exception) {
+			logger.error(exception.getMessage());
 		}
 		return list1;
 	}
@@ -57,15 +62,16 @@ public class UploaderUtility {
 		int noofcolumns = 0;
 		try {
 			fis = new FileInputStream(new File(filename));
-		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
+		} catch (FileNotFoundException exception) {
+			logger.error(exception);
+			ExceptionHandler.main(Constants.input_file_not_found);
 		}
 		XSSFWorkbook myWorkBook = null;
 		try {
 			myWorkBook = new XSSFWorkbook(fis);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
+			ExceptionHandler.main(Constants.error_reading_file);
 		}
 		XSSFSheet sheet = myWorkBook.getSheetAt(0);
 		Iterator rowIterator = sheet.rowIterator();
@@ -82,14 +88,15 @@ public class UploaderUtility {
 		try {
 			fis = new FileInputStream(new File(filename));
 		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
+			logger.error(e);
+			ExceptionHandler.main(Constants.input_file_not_found);
 		}
 		XSSFWorkbook myWorkBook = null;
 		try {
 			myWorkBook = new XSSFWorkbook(fis);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
+			ExceptionHandler.main(Constants.error_reading_file);
 		}
 		XSSFSheet sheet = myWorkBook.getSheetAt(0);
 		rowcount = sheet.getPhysicalNumberOfRows();
@@ -102,26 +109,16 @@ public class UploaderUtility {
 		return set;
 	}
 
-	public List<Integer> getStartIndex(String filename)
-			throws RallyUploaderException {
+	public List<Integer> getStartIndex(String filename) {
 		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
 		readExcelData = new ReadExcelDataImpl();
-		try {
-			alltestsceneriosid_list = readExcelData
-					.getAllTestsceneriosId(filename);
-		} catch (RallyUploaderException e1) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.ERROR_READING_FILE,
-					Constants.error_reading_file);
-		}
-
+		alltestsceneriosid_list = readExcelData.getAllTestsceneriosId(filename);
 		Set<Integer> nonduplicatedsceneriodid_list = new LinkedHashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
 		List<Integer> testidfrequency_list = new ArrayList<Integer>();
 		testidfrequency_list = UploaderUtility
 				.getTestIdfrequency(alltestsceneriosid_list);
-
 		List<Integer> aggregatedlist = new ArrayList<Integer>();
 		aggregatedlist = UploaderUtility
 				.getAggregatedarray(testidfrequency_list);
@@ -138,8 +135,7 @@ public class UploaderUtility {
 		return start_index;
 	}
 
-	public List<Integer> getEndIndex(String filename)
-			throws RallyUploaderException {
+	public List<Integer> getEndIndex(String filename) {
 		UploaderUtility uploaderUtility = new UploaderUtility();
 		List<Integer> start_index_list = new ArrayList<Integer>();
 		start_index_list = getStartIndex(filename);
@@ -158,8 +154,7 @@ public class UploaderUtility {
 
 	}
 
-	public static List<Integer> getTestIdfrequency(List<Integer> list)
-			throws RallyUploaderException {
+	public static List<Integer> getTestIdfrequency(List<Integer> list) {
 		int counter = 0;
 		Set<Integer> sortedset = new HashSet<Integer>();
 		sortedset.addAll(list);
@@ -176,11 +171,14 @@ public class UploaderUtility {
 						ResultStatusConstants.NON_INCREASING_TEST_SCENERIO_ID,
 						Constants.non_decreasing_id);
 			}
-		} catch (Exception e) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.NON_INCREASING_TEST_SCENERIO_ID,
-					Constants.non_decreasing_id);
+		} catch (RallyUploaderException rallyUploaderException) {
+			logger.error(rallyUploaderException);
+			ExceptionHandler.main(rallyUploaderException.toString());
+		} catch (Exception exception) {
+			logger.error(exception);
+			ExceptionHandler.main(exception.toString());
 		}
+		return null;
 	}
 
 	public static int getTotalnoofcellls(String filename) {

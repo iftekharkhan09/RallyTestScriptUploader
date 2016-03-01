@@ -13,19 +13,23 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.*;
 import com.autodesk.rallyuploader.utils.*;
 
 public class ReadExcelDataImpl implements ReadExcelData {
-	public int getCellHeaderColumn(String filename, String column_value)
-			throws RallyUploaderException {
+	static Logger logger = Logger
+			.getLogger(com.autodesk.rallyuploader.services.ReadExcelDataImpl.class);
+
+	public int getCellHeaderColumn(String filename, String column_value) {
 		FileInputStream fis = null;
 		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 		int i = 0;
@@ -47,21 +51,26 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+
+			ExceptionHandler.main(ex.toString());
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(
-						ResultStatusConstants.ERROR_CLOSING_FILE,
-						Constants.fileclosing_error);
+				try {
+					throw new RallyUploaderException(
+							ResultStatusConstants.ERROR_CLOSING_FILE,
+							Constants.fileclosing_error);
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		}
 		return j;
 	}
 
-	public ArrayList<Integer> getAllTestsceneriosId(String filename)
-			throws RallyUploaderException {
+	public ArrayList<Integer> getAllTestsceneriosId(String filename) {
 		FileInputStream fis = null;
 		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 		ArrayList<Integer> list = new ArrayList<Integer>();
@@ -100,29 +109,28 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex);
+			ExceptionHandler.main(ex.toString());
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(
-						ResultStatusConstants.ERROR_CLOSING_FILE,
-						Constants.fileclosing_error);
+				try {
+					throw new RallyUploaderException(
+							ResultStatusConstants.ERROR_CLOSING_FILE,
+							Constants.fileclosing_error);
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		}
 		return list;
 	}
 
-	public List<String> getAllcelldata(String filename)
-			throws RallyUploaderException {
+	public List<String> getAllcelldata(String filename) {
 		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
-		try {
-			alltestsceneriosid_list = getAllTestsceneriosId(filename);
-		} catch (RallyUploaderException e1) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.ERROR_READING_FILE,
-					Constants.error_reading_file);
-		}
+		alltestsceneriosid_list = getAllTestsceneriosId(filename);
 		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
 		nonduplicatedsceneriodid_list = UploaderUtility
 				.getNonduplicatedId(alltestsceneriosid_list);
@@ -137,9 +145,14 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		try {
 			fis = new FileInputStream(new File(filename));
 		} catch (FileNotFoundException e) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.FILE_NOT_FOUND_ERROR,
-					Constants.input_file_not_found);
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+						Constants.input_file_not_found);
+			} catch (RallyUploaderException e1) {
+				logger.error(e1);
+				ExceptionHandler.main(e1.toString());
+			}
 		}
 		XSSFWorkbook myWorkBook = null;
 		try {
@@ -175,31 +188,35 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			}
 			return array;
 		} catch (IOException e) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.ERROR_READING_FILE,
-					Constants.error_reading_file);
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.ERROR_READING_FILE,
+						Constants.error_reading_file);
+			} catch (RallyUploaderException e1) {
+				logger.error(e1);
+				ExceptionHandler.main(e1.toString());
+			}
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(
-						ResultStatusConstants.ERROR_CLOSING_FILE,
-						Constants.fileclosing_error);
+				try {
+					throw new RallyUploaderException(
+							ResultStatusConstants.ERROR_CLOSING_FILE,
+							Constants.fileclosing_error);
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		}
+		return null;
 
 	}
 
-	public String mergeCelldata(int start_index, int end_index, String filename)
-			throws RallyUploaderException {
+	public String mergeCelldata(int start_index, int end_index, String filename) {
 		List<String> list = new ArrayList<String>();
-		try {
-			list = getAllcelldata(filename);
-		} catch (RallyUploaderException e) {
-			throw new RallyUploaderException(
-					ResultStatusConstants.ERROR_READING_FILE,
-					Constants.error_reading_file);
-		}
+		list = getAllcelldata(filename);
 		String string = new String();
 		List<String> list2 = new ArrayList<String>();
 		for (int i = start_index; i <= end_index; i++)
@@ -211,8 +228,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		return final_String;
 	}
 
-	public Map<ExcelData, Object> saveExceldata(String filename)
-			throws RallyUploaderException, IOException {
+	public Map<ExcelData, Object> saveExceldata(String filename) {
 		File file = new File(filename);
 		ReadExcelData readExcelDataImpl = new ReadExcelDataImpl();
 		Map<ExcelData, Object> final_map = new HashMap<ExcelData, Object>();
@@ -262,14 +278,18 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				final_map.put(excelData2, final_array.get(i));
 			}
 		} else
-			throw new RallyUploaderException(
-					ResultStatusConstants.FILE_NOT_FOUND_ERROR,
-					Constants.input_file_not_found);
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+						Constants.input_file_not_found);
+			} catch (RallyUploaderException e) {
+				logger.error(e);
+				ExceptionHandler.main(e.toString());
+			}
 		return final_map;
 	}
 
-	public Map<Integer, String> saveAlltestSceneiosdata(String filename)
-			throws RallyUploaderException {
+	public Map<Integer, String> saveAlltestSceneiosdata(String filename) {
 		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
 		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
 		alltestsceneriosid_list = readExcelDataImpl
@@ -326,16 +346,20 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				}
 			}
 		} catch (IOException ex) {
-			ExceptionHandler exceptionHandler=new ExceptionHandler();
-			int row_length=exceptionHandler.getRowlength(ex.toString());
-			int col_length=exceptionHandler.getColumnlength(ex.toString());
+			logger.error(ex);
+			ExceptionHandler.main(ex.toString());
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
-				throw new RallyUploaderException(
-						ResultStatusConstants.ERROR_CLOSING_FILE,
-						Constants.fileclosing_error);
+				try {
+					throw new RallyUploaderException(
+							ResultStatusConstants.ERROR_CLOSING_FILE,
+							Constants.fileclosing_error);
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		}
 		List<String> set_values = new ArrayList<String>();

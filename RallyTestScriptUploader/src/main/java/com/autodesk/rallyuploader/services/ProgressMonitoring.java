@@ -1,9 +1,7 @@
 package com.autodesk.rallyuploader.services;
 import java.awt.event.*;
 import java.io.Serializable;
-
 import javax.swing.*;
-
 import com.autodesk.rallyuploader.utils.UploaderUtility;
 
 public class ProgressMonitoring extends JFrame implements ActionListener,Serializable {
@@ -45,7 +43,6 @@ public class ProgressMonitoring extends JFrame implements ActionListener,Seriali
 	public int getTotalnoofcells(String file_path) {
 		this.setFile_path(file_path);
 		return UploaderUtility.getTotalnoofcellls(file_path);
-
 	}
 
 	public String getFile_path() {

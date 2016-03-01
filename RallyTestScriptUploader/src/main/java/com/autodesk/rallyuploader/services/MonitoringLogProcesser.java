@@ -1,4 +1,5 @@
 package com.autodesk.rallyuploader.services;
+
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -7,7 +8,7 @@ import com.autodesk.rallyuploader.utils.FileUtility;
 
 public class MonitoringLogProcesser {
 	private final String DEFAULT_CONVERSATION_PATTERN = "%d{yyyy-MM-dd HH:mm:ss} [%-4p] [%t] %c:%L - %m%n";
-	private final String DEFAULT_LOG_FILE_PATH = "/opt/specsavers/smsreminder/smsreminder.log";
+	private final String DEFAULT_LOG_FILE_PATH = "src/main/resources/log4j.properties";
 	private final String MONITORING_FILE_KEY = "monitoringFile";
 	private final String LEVEL_KEY = "LEVEL";
 	FileAppender fileAppender;

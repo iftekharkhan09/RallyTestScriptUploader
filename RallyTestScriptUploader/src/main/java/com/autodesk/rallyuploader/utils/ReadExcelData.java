@@ -1,18 +1,20 @@
 package com.autodesk.rallyuploader.utils;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import com.autodesk.rallyuploader.exeption.RallyUploaderException;
+import java.util.Map;
+import com.autodesk.rallyuploader.entity.ExcelData;
 
 public interface ReadExcelData {
-	public ArrayList<Integer> getAllTestsceneriosId(String filename)
-			throws RallyUploaderException;
+	public ArrayList<Integer> getAllTestsceneriosId(String filename);
 
-	public List<String> getAllcelldata(String filename)
-			throws RallyUploaderException;
+	public List<String> getAllcelldata(String filename);
 
-	public String mergeCelldata(int start_index, int end_index, String filename)
-			throws RallyUploaderException;
+	public String mergeCelldata(int start_index, int end_index, String filename);
+
+	public int getCellHeaderColumn(String filename, String column_value);
+
+	public Map<ExcelData, Object> saveExceldata(String filename);
+
+	public Map<Integer, String> saveAlltestSceneiosdata(String filename);
 
 }

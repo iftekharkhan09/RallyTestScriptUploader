@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import com.autodesk.rallyuploader.services.ExceptionHandler;
+
 public class FileUtility {
 	static Logger logger = Logger
 			.getLogger(com.autodesk.rallyuploader.utils.FileUtility.class);
@@ -36,8 +38,10 @@ public class FileUtility {
 			return value;
 		} catch (FileNotFoundException e) {
 			logger.error("Unable to locate the properties file - " + e);
+			ExceptionHandler.main(e.toString());
 		} catch (IOException e) {
 			logger.error("Error while reading the properties file - " + e);
+			ExceptionHandler.main(e.toString());
 		}
 		return null;
 	}

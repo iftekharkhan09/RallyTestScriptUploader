@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -39,10 +38,10 @@ import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
+import com.autodesk.rallyuploader.utils.ResultStatusConstants;
 import com.autodesk.rallyuploader.utils.UploaderUtility;
 
 public class SwingApplication extends ReadExcelDataImpl {
@@ -75,14 +74,17 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private JFileChooser fileChooser_Inputpath;
 	private static List<String> excelheaderlist;
 	private String input_file_path;
+	private MonitoringLogProcesser monitoringLogProcesser;
 
 	public static void main(String[] args) {
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					SwingApplication window = new SwingApplication();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
+					logger.fatal(e);
 					e.printStackTrace();
 				}
 			}
@@ -94,7 +96,8 @@ public class SwingApplication extends ReadExcelDataImpl {
 	}
 
 	private void initialize() {
-
+		monitoringLogProcesser = new MonitoringLogProcesser();
+		monitoringLogProcesser.setLog4jProperties();
 		frame = new JFrame();
 		frame.setBounds(100, 100, 915, 736);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -253,12 +256,9 @@ public class SwingApplication extends ReadExcelDataImpl {
 			myPicture = ImageIO
 					.read(new File("src/main/resources/download.png"));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			logger.error(e2);
 		}
 		JLabel Alert_Label = new JLabel(new ImageIcon(myPicture));
-		// add(Alert_Label);
-
 		Alert_Label.setForeground(new Color(0, 0, 0));
 		GridBagConstraints gbc_Alert_Label = new GridBagConstraints();
 		gbc_Alert_Label.gridwidth = 2;
@@ -266,7 +266,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 		gbc_Alert_Label.gridx = 0;
 		gbc_Alert_Label.gridy = 0;
 		panel_7.add(Alert_Label, gbc_Alert_Label);
-
 		JTextArea txtrItIsRecommended = new JTextArea();
 		txtrItIsRecommended.setFont(new Font("Monospaced", Font.ITALIC, 15));
 		txtrItIsRecommended.setLineWrap(true);
@@ -277,13 +276,10 @@ public class SwingApplication extends ReadExcelDataImpl {
 		gbc_txtrItIsRecommended.gridy = 0;
 		panel_7.add(txtrItIsRecommended, gbc_txtrItIsRecommended);
 		panel_5.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
-		JLabel lblNewLabel_18 = new JLabel(
-				"Click here to start the processing of the input sheet ");
+		JLabel lblNewLabel_18 = new JLabel(Constants.sheet_processing);
 		lblNewLabel_18.setFont(new Font("Verdana", Font.PLAIN, 25));
 		lblNewLabel_18.setVerticalAlignment(SwingConstants.TOP);
 		panel_5.add(lblNewLabel_18);
-
 		Process_test_script = new JButton("Process test script");
 		Process_test_script.setFont(new Font("Verdana", Font.PLAIN, 15));
 		panel_5.add(Process_test_script);
@@ -466,56 +462,86 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals("Process test script")) {
-					input_file_path = fileChooser_Inputpath.getSelectedFile()
-							.getAbsolutePath();
-					ProgressMonitoring.main(input_file_path);
-					Process_test_script.setEnabled(false);
-					ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-					try {
+				try {
+					if (e.getActionCommand().equals("Process test script")) {
+						try {
+							input_file_path = fileChooser_Inputpath
+									.getSelectedFile().getAbsolutePath();
+							if (input_file_path == null) {
+								throw new RallyUploaderException(
+										ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+										Constants.input_file_not_present);
+							}
+						} catch (RallyUploaderException ex) {
+							logger.error(ex);
+							ExceptionHandler.main(ex.toString());
+						}
+						ProgressMonitoring.main(input_file_path);
+						Process_test_script.setEnabled(false);
+						ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
 						Map<Integer, String> maps = new LinkedHashMap<Integer, String>();
 						maps = readExcelDataImpl
 								.saveAlltestSceneiosdata(input_file_path);
-						decriptive(maps, input_file_path);
+						try {
+							decriptive(maps, input_file_path);
+						} catch (RallyUploaderException e1) {
+							logger.error(e1);
+							ExceptionHandler.main(e1.toString());
+						}
 						Map<ExcelData, Object> data = new HashMap<ExcelData, Object>();
 						data = readExcelDataImpl.saveExceldata(input_file_path);
 						static_data.putAll(data);
-					} catch (RallyUploaderException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
 					}
-
+				} catch (Exception ex) {
+					logger.error(ex);
+					ExceptionHandler.main(ex.toString());
 				}
 			}
 		});
 		output_generator_button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				WriteExcelDataImpl writeExcelDataImpl = new WriteExcelDataImpl();
-				String output_file_path = filechooser_outputpath
-						.getSelectedFile().getAbsolutePath();
-				String input_file_path = fileChooser_Inputpath
-						.getSelectedFile().getAbsolutePath();
-				if (input_file_path != null && output_file_path != null) {
+				String output_file_path = null;
+				try {
+					output_file_path = filechooser_outputpath.getSelectedFile()
+							.getAbsolutePath();
+				} catch (Exception e1) {
 					try {
-						writeExcelHeader();
-						ProcessStaticdata(input_file_path);
-						writeExcelDataImpl.writeFormatteddatatoExcel(
-								static_data, output_file_path);
-
-					} catch (RallyUploaderException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				} else {
-					if (input_file_path == null) {
-						System.out.println("Please enter the Input File Path");
-					} else if (output_file_path == null) {
-						System.out.println("Please enter the Output File Path");
+						throw new RallyUploaderException(
+								ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+								Constants.output_file_not_present);
+					} catch (RallyUploaderException e2) {
+						logger.error(e2);
+						ExceptionHandler.main(e2.toString());
 					}
 				}
+				try {
+					input_file_path = fileChooser_Inputpath.getSelectedFile()
+							.getAbsolutePath();
+				} catch (Exception e1) {
+					try {
+						throw new RallyUploaderException(
+								ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+								Constants.input_file_not_found);
+					} catch (RallyUploaderException e2) {
+						logger.error(e2);
+						ExceptionHandler.main(e2.toString());
+					}
+				}
+				// if (input_file_path != null && output_file_path != null) {
+				try {
+					writeExcelHeader();
+					ProcessStaticdata(input_file_path);
+					writeExcelDataImpl.writeFormatteddatatoExcel(static_data,
+							output_file_path);
 
+				} catch (RallyUploaderException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				} catch (IOException e1) {
+					logger.error(e1);
+					ExceptionHandler.main(e1.toString());
+				}
 			}
 		});
 
