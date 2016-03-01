@@ -52,7 +52,7 @@ public class UploaderUtility {
 				list1.set(i, list1.get(i - 1) + list1.get(i));
 			}
 		} catch (Exception exception) {
-			logger.error(exception.getMessage());
+			logger.error(exception);
 		}
 		return list1;
 	}
