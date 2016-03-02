@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -38,6 +39,7 @@ import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
@@ -75,22 +77,25 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private static List<String> excelheaderlist;
 	private String input_file_path;
 	private MonitoringLogProcesser monitoringLogProcesser;
+	
+	
+	public void call(){
+		main(null);
+	}
 
-	public static void main(String[] args) {
-
+	public static void main(String args[]) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					SwingApplication window = new SwingApplication();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
-					logger.fatal(e);
+					logger.error(e);
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
 	public SwingApplication() {
 		initialize();
 	}
@@ -137,7 +142,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		JLabel lblNewLabel_19 = new JLabel("");
 
-		JLabel lblNewLabel_20 = new JLabel("New label");
+
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1
 				.setHorizontalGroup(gl_panel_1
@@ -154,12 +159,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 												gl_panel_1
 														.createParallelGroup(
 																Alignment.LEADING)
-														.addGroup(
-																gl_panel_1
-																		.createSequentialGroup()
-																		.addGap(10)
-																		.addComponent(
-																				lblNewLabel_20))
+													
 														.addComponent(
 																panel_6,
 																GroupLayout.DEFAULT_SIZE,
@@ -227,7 +227,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 						.addComponent(output_generator_button).addGap(11)
 						.addComponent(lblNewLabel_19)
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(lblNewLabel_20)
 						.addContainerGap(45, Short.MAX_VALUE)));
 		panel_6.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
@@ -236,7 +235,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 		output_filepicker.setMode(JFilePicker.MODE_OPEN);
 		output_filepicker.addFileTypeFilter();
 		filechooser_outputpath = output_filepicker.getFileChooser();
-		filechooser_outputpath.setCurrentDirectory(new File("C:/"));
+	//	filechooser_outputpath.setCurrentDirectory(new File("C:/"));
 		filechooser_outputpath.setAlignmentX(SwingConstants.CENTER);
 		filechooser_outputpath.setAlignmentY(SwingConstants.CENTER);
 		output_filepicker.setAlignmentX(SwingConstants.CENTER);
@@ -447,7 +446,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		input_filepicker.addFileTypeFilter();
 		fileChooser_Inputpath = input_filepicker.getFileChooser();
-		fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
+		//fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
 		fileChooser_Inputpath.setAlignmentX(SwingConstants.CENTER);
 		fileChooser_Inputpath.setAlignmentY(SwingConstants.CENTER);
 		input_filepicker.setAlignmentX(SwingConstants.CENTER);

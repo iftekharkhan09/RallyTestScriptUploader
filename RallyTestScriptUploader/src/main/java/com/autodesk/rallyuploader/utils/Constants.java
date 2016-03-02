@@ -6,6 +6,8 @@ public interface Constants {
 	final String space = "\\s";
 	final String break_line = "</br></br>";
 	final String below_line = "</br>---------------------------------------------------------</br>";
+	final String application_loading="Loading the application.Please wait...";
+	final String version="Version 2.0";
 	final String fileclosing_error = "Error while closing the file!!";
 	final String empty_cell = "is empty";
 	final String testvalidation_no = "Test Validation ID - ";
@@ -13,13 +15,16 @@ public interface Constants {
 	final String sheet_processing="Click here to start the processing of the input sheet";
 	final String input_file_not_present = "Please select the input file.";
 	final String output_file_not_present = "Please select the output file.";
-	final String author = "iftekhar.ahmed.khan@accenture.com";
+	final String splash_message="Rally Test Script Uploader Utilty";
+	final String author_mail = "iftekhar.ahmed.khan@accenture.com";
+	final String issue_message="In case of any issues please contact - ";
 	final String input_file_not_found = "Input file does not exists";
 	final String error_reading_file = "Not able to read the input excel sheet";
 	final String non_decreasing_id = "The test scenerio IDs are not in non incresing order.Please verify!!";
 	final String success = "Test data has been successfully written to the file - ";
 	final String welcome_message = "Welcome to the test script uploader utility for Rally!!";
 	final String developer_identity = "This application has been developed by ";
+	final String author_name="iftekhar ahmed khan.";
 	final String test_script_path = "Please select the input test script";
 	final String final_test_script_path = "Please select the output test script";
 	final String file_processing = "Processing the cells in the excel sheet....";
