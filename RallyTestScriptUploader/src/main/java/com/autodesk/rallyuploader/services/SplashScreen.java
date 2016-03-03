@@ -24,7 +24,7 @@ public class SplashScreen extends JWindow {
 
     // Set the window's bounds, centering the window
     int width = 394;
-    int height =340;
+    int height =320;
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (screen.width-width)/2;
     int y = (screen.height-height)/2;
@@ -68,14 +68,14 @@ public class SplashScreen extends JWindow {
 	gbc_lblNewLabel_3.gridy = 3;
 	content.add(lblNewLabel_3, gbc_lblNewLabel_3);
 	
-	JLabel loading_image = new JLabel(new ImageIcon("src/main/resources/java8_splash.gif"));
+	JLabel loading_image = new JLabel(new ImageIcon("src/main/resources/loading.gif"));
 	GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
 	gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
 	gbc_lblNewLabel_4.gridx = 0;
 	gbc_lblNewLabel_4.gridy = 4;
 	content.add(loading_image, gbc_lblNewLabel_4);
    
-    Color oraRed = new Color(156, 200, 20,  255);
+    Color oraRed = new Color(200, 200, 200,  255);
     content.setBorder(BorderFactory.createLineBorder(oraRed, 10));
 
     // Display it

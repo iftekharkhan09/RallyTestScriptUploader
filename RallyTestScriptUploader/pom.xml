@@ -18,8 +18,14 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.9</version>
 				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>false</downloadJavadocs>
+					<configuration>
+						<outputDirectory>C:\\Crunchify\lib</outputDirectory>
+						<overWriteReleases>false</overWriteReleases>
+						<overWriteSnapshots>false</overWriteSnapshots>
+						<overWriteIfNewer>true</overWriteIfNewer>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>false</downloadJavadocs>
+					</configuration>
 				</configuration>
 			</plugin>
 			<plugin>

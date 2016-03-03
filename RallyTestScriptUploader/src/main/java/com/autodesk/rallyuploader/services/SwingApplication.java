@@ -40,6 +40,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.apache.log4j.Logger;
+
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
@@ -77,6 +79,8 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private static List<String> excelheaderlist;
 	private String input_file_path;
 	private MonitoringLogProcesser monitoringLogProcesser;
+	static Logger logger = Logger
+			.getLogger(com.autodesk.rallyuploader.services.SwingApplication.class);
 	
 	
 	public void call(){
@@ -493,6 +497,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 					}
 				} catch (Exception ex) {
 					logger.error(ex);
+					ex.printStackTrace();
 					ExceptionHandler.main(ex.toString());
 				}
 			}

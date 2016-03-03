@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -368,9 +369,32 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			set_values.add(itt.next());
 		}
 		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
+
+				if (nonduplicatedsceneriodid_list.size() > set_values.size()) {
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.DUPLICATE_TEST_SCENERIO,
+						Constants.duplicate_scenerio);
+			} catch (RallyUploaderException e) {
+				logger.error(e);
+				ExceptionHandler.main(e.toString());
+			}
+		}
+		if (nonduplicatedsceneriodid_list.size() < set_values.size()) {
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.DUPLICATE_TEST_SCENERIO,
+						Constants.duplicate_scenerio);
+			} catch (RallyUploaderException e) {
+				logger.error(e);
+				ExceptionHandler.main(e.toString());
+			}
+		}
 		for (int i = 0; i < nonduplicatedsceneriodid_list.size(); i++) {
 			map.put(nonduplicatesceneriosid_list.get(i), set_values.get(i));
 		}
+
+
 		return map;
 	}
 
