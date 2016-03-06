@@ -8,7 +8,7 @@ public interface Constants {
 	final String below_line = "</br>---------------------------------------------------------</br>";
 	final String application_loading = "Loading the application.Please wait...";
 	final String duplicate_scenerio = "The Scenerio descriptions are duplicate.Please verify!!";
-	final String duplicate_scenerios_exceeds = "One or more test scenerio IDs have one or more Test Scenerio Description.Please verify!!";
+	final String duplicate_scenerios_exceeds = "One or more test scenerio IDs have more than one test scenerio description.Please verify!!";
 	final String version = "Version 2.0";
 	final String fileclosing_error = "Error while closing the file!!";
 	final String empty_cell = "is empty";
@@ -33,7 +33,12 @@ public interface Constants {
 	final String unable_to_create_file = "Unable to create the output test script in the output file specified";
 	final String cell_limit_exceeded = "The length Of the below cell is more than what is supported by .xls and .xlsx .Please break the Test Scenerio.";
 	final String unable_to_write_data = "Unable to write the data into the output file!!";
-	final String recommendation = "Note: It is recommended to the enter the corresponding values for the above fields,if the values as same for most of the test scenerios.You can also enter the values in the output excel sheet generated.";
+	final String test_scenario_Id_column_not_found = "The Column 'Test Scenerio ID' does not exists.Please verify!!";
+	final String test_scenario_column_not_found = "The Column 'Test Scenerio' does not exists.Please verify!!";
+	final String test_condition_id_column_not_found = "The Column 'Test Condition ID' does not exists.Please verify!!";
+	final String test_Steps_column_not_found = "The Column 'Test Steps' does not exists.Please verify!!";
+	final String test_step_expected_result_coumn_not_found = "The Column 'Test Step Expected Result' does not exists.Please verify!!";
+	final String recommendation = "Note: It is recommended to enter the corresponding values for the above fields,if the values as same for most of the test scenerios.You can also enter the values in the output excel sheet generated.";
 	final String display_color = "Display Color";
 	final String expedite = "Expedite";
 	final String ready = "Ready";
@@ -62,4 +67,5 @@ public interface Constants {
 	final String Test_Scenario = "Test Scenario";
 	final String Test_Scenerio_sepator = "TS_";
 	final String Test_Steps = "Test Steps";
+	final String Test_Step_Expected_Result="Test Step Expected Result";
 }

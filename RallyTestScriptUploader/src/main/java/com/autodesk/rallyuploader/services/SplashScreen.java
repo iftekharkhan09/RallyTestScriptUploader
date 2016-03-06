@@ -15,9 +15,6 @@ public class SplashScreen extends JWindow {
   	panel.setLayout(new BorderLayout(0, 0));
     duration = d;
   }
-
-  // A simple little method to show a title screen in the center
-  // of the screen for the amount of time given in the constructor
   public void showSplash() {
     JPanel content = (JPanel)getContentPane();
     content.setBackground(Color.white);
@@ -87,13 +84,7 @@ public class SplashScreen extends JWindow {
     setVisible(false);
   }
 
-  public void showSplashAndExit() {
+  public void showSplashScreen() {
     showSplash();
-   // System.exit(0);
-  }
-
-  public void display(int time) {
-    SplashScreen splash = new SplashScreen(time);
-    splash.showSplashAndExit();
   }
 }

@@ -13,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,7 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.autodesk.rallyuploader.entity.ExcelData;
 import com.autodesk.rallyuploader.exeption.*;
 import com.autodesk.rallyuploader.utils.*;
@@ -75,61 +73,96 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		FileInputStream fis = null;
 		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		try {
-			fis = new FileInputStream(new File(filename));
-			XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
-			XSSFSheet sheet = myWorkBook.getSheetAt(0);
-			Row row = null;
-			Cell cell = null;
-			numberOfColumn = UploaderUtility.getNoofcolumns(filename);
-			Iterator rows = sheet.iterator();
-			ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-			int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
-					Constants.test_scenerio_condition) - 1;
-			while (rows.hasNext()) {
-				row = (Row) rows.next();
-				if (row.getRowNum() == 0 || row == null) {
-					continue;
-				}
-				String key = null;
-				for (int colIndex = 0; colIndex < numberOfColumn; colIndex++) {
-					if (colIndex == column_no) {
-						cell = row.getCell(colIndex);
-						if (cell != null) {
-							key = cell.getStringCellValue();
-							int index = key
-									.indexOf(Constants.testscenerio_identifier);
-							String testscenerio = key.substring(index + 3,
-									key.length());
-							String id = testscenerio.replaceAll(
-									Constants.space, "");
-							int testscenerioid = Integer.parseInt(id);
-							list.add(testscenerioid);
+
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
+				Constants.test_scenerio_condition);
+		if (column_no == 0) {
+			logger.error(Constants.test_scenario_Id_column_not_found);
+			ExceptionHandler.main(Constants.test_scenario_Id_column_not_found);
+		} else {
+			try {
+				column_no = column_no - 1;
+				fis = new FileInputStream(new File(filename));
+				XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
+				XSSFSheet sheet = myWorkBook.getSheetAt(0);
+				Row row = null;
+				Cell cell = null;
+				numberOfColumn = UploaderUtility.getNoofcolumns(filename);
+				Iterator rows = sheet.iterator();
+
+				while (rows.hasNext()) {
+					row = (Row) rows.next();
+					if (row.getRowNum() == 0 || row == null) {
+						continue;
+					}
+					String key = null;
+					for (int colIndex = 0; colIndex < numberOfColumn; colIndex++) {
+						if (colIndex == column_no) {
+							cell = row.getCell(colIndex);
+							if (cell.getStringCellValue() != null) {
+								key = cell.getStringCellValue();
+								int index = key
+										.indexOf(Constants.testscenerio_identifier);
+								String testscenerio = key.substring(index + 3,
+										key.length());
+								String id = testscenerio.replaceAll(
+										Constants.space, "");
+								int testscenerioid = Integer.parseInt(id);
+								list.add(testscenerioid);
+							}
 						}
 					}
 				}
-			}
-		} catch (IOException ex) {
-			logger.error(ex);
-			ExceptionHandler.main(ex.toString());
-		} finally {
-			try {
-				fis.close();
-			} catch (IOException e) {
+
+			} catch (IOException ex) {
+				logger.error(ex);
+				ExceptionHandler.main(ex.toString());
+			} finally {
 				try {
-					throw new RallyUploaderException(
-							ResultStatusConstants.ERROR_CLOSING_FILE,
-							Constants.fileclosing_error);
-				} catch (RallyUploaderException e1) {
-					logger.error(e1);
-					ExceptionHandler.main(e1.toString());
+					fis.close();
+				} catch (IOException e) {
+					try {
+						throw new RallyUploaderException(
+								ResultStatusConstants.ERROR_CLOSING_FILE,
+								Constants.fileclosing_error);
+					} catch (RallyUploaderException e1) {
+						logger.error(e1);
+						ExceptionHandler.main(e1.toString());
+					}
 				}
 			}
+			return list;
 		}
-		return list;
+		return null;
 	}
 
 	public List<String> getAllcelldata(String filename) {
+		int test_condition_column_no = getCellHeaderColumn(filename,
+				Constants.test_condition_id);
+
+		int test_steps_column_no = getCellHeaderColumn(filename,
+				Constants.Test_Steps);
+
+		int test_step_expected_result_column_no = getCellHeaderColumn(filename,
+				Constants.Test_Step_Expected_Result);
+
+		if (test_condition_column_no == 0) {
+			logger.error(Constants.test_condition_id_column_not_found);
+			ExceptionHandler.main(Constants.test_condition_id_column_not_found);
+		} else
+			test_condition_column_no = test_condition_column_no - 1;
+
+		if (test_steps_column_no == 0) {
+			logger.error(Constants.test_Steps_column_not_found);
+			ExceptionHandler.main(Constants.test_Steps_column_not_found);
+		} else
+			test_steps_column_no = test_steps_column_no - 1;
+		if (test_step_expected_result_column_no == 0) {
+			logger.error(Constants.test_step_expected_result_coumn_not_found);
+			ExceptionHandler.main(Constants.test_step_expected_result_coumn_not_found);
+		}
+
 		List<Integer> alltestsceneriosid_list = new ArrayList<Integer>();
 		alltestsceneriosid_list = getAllTestsceneriosId(filename);
 		Set<Integer> nonduplicatedsceneriodid_list = new HashSet<Integer>();
@@ -164,10 +197,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			List<String> array = new ArrayList<String>();
 			int no_of_columns = UploaderUtility.getNoofcolumns(filename);
 			int no_of_rows = UploaderUtility.getNoofRows(filename);
-			int test_steps_column_no = getCellHeaderColumn(filename,
-					Constants.Test_Steps) - 1;
-			int test_condition_column_no = getCellHeaderColumn(filename,
-					Constants.test_condition_id) - 1;
+
 			for (int l = 3; l < 5; l++) {
 				int counter1 = 1;
 				for (int i = counter1; i < no_of_rows; i++) {
@@ -320,6 +350,14 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		FileInputStream fis = null;
 		int numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 		Set<String> set = new LinkedHashSet<String>();
+		int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
+				Constants.Test_Scenario);
+
+		if (column_no == 0) {
+			logger.error(Constants.test_scenario_column_not_found);
+			ExceptionHandler.main(Constants.test_scenario_column_not_found);
+		} else
+			column_no = column_no - 1;
 		try {
 			fis = new FileInputStream(new File(filename));
 			XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
@@ -328,8 +366,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			Cell cell = null;
 			numberOfColumn = UploaderUtility.getNoofcolumns(filename);
 			Iterator rows = sheet.iterator();
-			int column_no = readExcelDataImpl.getCellHeaderColumn(filename,
-					Constants.Test_Scenario) - 1;
+
 			while (rows.hasNext()) {
 				row = (Row) rows.next();
 				if (row.getRowNum() == 0 || row == null) {
@@ -363,6 +400,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 				}
 			}
 		}
+
 		List<String> set_values = new ArrayList<String>();
 		Iterator<String> itt = set.iterator();
 		while (itt.hasNext()) {
@@ -370,7 +408,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		}
 		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
 
-				if (nonduplicatedsceneriodid_list.size() > set_values.size()) {
+		if (nonduplicatedsceneriodid_list.size() > set_values.size()) {
 			try {
 				throw new RallyUploaderException(
 						ResultStatusConstants.DUPLICATE_TEST_SCENERIO,
@@ -384,7 +422,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 			try {
 				throw new RallyUploaderException(
 						ResultStatusConstants.DUPLICATE_TEST_SCENERIO,
-						Constants.duplicate_scenerio);
+						Constants.duplicate_scenerios_exceeds);
 			} catch (RallyUploaderException e) {
 				logger.error(e);
 				ExceptionHandler.main(e.toString());
@@ -392,9 +430,8 @@ public class ReadExcelDataImpl implements ReadExcelData {
 		}
 		for (int i = 0; i < nonduplicatedsceneriodid_list.size(); i++) {
 			map.put(nonduplicatesceneriosid_list.get(i), set_values.get(i));
+
 		}
-
-
 		return map;
 	}
 

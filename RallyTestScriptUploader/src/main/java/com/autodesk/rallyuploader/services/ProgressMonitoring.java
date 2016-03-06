@@ -1,10 +1,14 @@
 package com.autodesk.rallyuploader.services;
+
 import java.awt.event.*;
 import java.io.Serializable;
+
 import javax.swing.*;
+
 import com.autodesk.rallyuploader.utils.UploaderUtility;
 
-public class ProgressMonitoring extends JFrame implements ActionListener,Serializable {
+public class ProgressMonitoring extends JFrame implements ActionListener,
+		Serializable {
 	private static final long serialVersionUID = -5825843675744860162L;
 	static ProgressMonitor pbar;
 	static int counter = 0;
@@ -13,7 +17,7 @@ public class ProgressMonitoring extends JFrame implements ActionListener,Seriali
 	public ProgressMonitoring(String file_path) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pbar = new ProgressMonitor(null, "Monitoring Progress",
-				"Initializing . . .", 0,100);
+				"Initializing . . .", 0, 100);
 		Timer timer = new Timer(100, this);
 		timer.start();
 	}
@@ -34,9 +38,24 @@ public class ProgressMonitoring extends JFrame implements ActionListener,Seriali
 				pbar.close();
 				System.exit(1);
 			}
-			pbar.setProgress(counter);
+			ExceptionHandler exceptionHandler = new ExceptionHandler();
+
+			/*pbar.setProgress(counter);
 			pbar.setNote("Data Processing is " + counter + "% complete");
-			counter += 1;
+			counter += 1;*/
+
+			ExceptionHandler exceptionHandler2 = new ExceptionHandler();
+			if(exceptionHandler2.getNo_of_objects_created()>=1){
+				pbar.close();
+			}
+			else if (counter == 100)
+				pbar.close();
+			else{
+				pbar.setProgress(counter);
+				pbar.setNote("Data Processing is " + counter + "% complete");
+				counter += 1;
+			}
+
 		}
 	}
 

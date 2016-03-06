@@ -4,8 +4,8 @@ import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 public class MainApp {
 	public static void main(String[] args) throws RallyUploaderException,
 			IOException, InterruptedException {
-		SplashScreen splashScreen=new SplashScreen(1000);
-		splashScreen.display(1000);
+		SplashScreen splashScreen=new SplashScreen(6000);
+		splashScreen.showSplashScreen();
 		SwingApplication swingApplication=new SwingApplication();
 		swingApplication.call();
 	}

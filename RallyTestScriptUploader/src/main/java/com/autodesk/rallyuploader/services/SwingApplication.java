@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -47,6 +46,7 @@ import com.autodesk.rallyuploader.exeption.RallyUploaderException;
 import com.autodesk.rallyuploader.utils.Constants;
 import com.autodesk.rallyuploader.utils.ResultStatusConstants;
 import com.autodesk.rallyuploader.utils.UploaderUtility;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 public class SwingApplication extends ReadExcelDataImpl {
 	private static int static_column = 0;
@@ -81,9 +81,8 @@ public class SwingApplication extends ReadExcelDataImpl {
 	private MonitoringLogProcesser monitoringLogProcesser;
 	static Logger logger = Logger
 			.getLogger(com.autodesk.rallyuploader.services.SwingApplication.class);
-	
-	
-	public void call(){
+
+	public void call() {
 		main(null);
 	}
 
@@ -100,6 +99,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 			}
 		});
 	}
+
 	public SwingApplication() {
 		initialize();
 	}
@@ -146,7 +146,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		JLabel lblNewLabel_19 = new JLabel("");
 
-
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1
 				.setHorizontalGroup(gl_panel_1
@@ -163,7 +162,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 												gl_panel_1
 														.createParallelGroup(
 																Alignment.LEADING)
-													
+
 														.addComponent(
 																panel_6,
 																GroupLayout.DEFAULT_SIZE,
@@ -239,7 +238,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 		output_filepicker.setMode(JFilePicker.MODE_OPEN);
 		output_filepicker.addFileTypeFilter();
 		filechooser_outputpath = output_filepicker.getFileChooser();
-	//	filechooser_outputpath.setCurrentDirectory(new File("C:/"));
+		// filechooser_outputpath.setCurrentDirectory(new File("C:/"));
 		filechooser_outputpath.setAlignmentX(SwingConstants.CENTER);
 		filechooser_outputpath.setAlignmentY(SwingConstants.CENTER);
 		output_filepicker.setAlignmentX(SwingConstants.CENTER);
@@ -450,7 +449,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		input_filepicker.addFileTypeFilter();
 		fileChooser_Inputpath = input_filepicker.getFileChooser();
-		//fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
+		// fileChooser_Inputpath.setCurrentDirectory(new File("C:/"));
 		fileChooser_Inputpath.setAlignmentX(SwingConstants.CENTER);
 		fileChooser_Inputpath.setAlignmentY(SwingConstants.CENTER);
 		input_filepicker.setAlignmentX(SwingConstants.CENTER);
@@ -465,40 +464,9 @@ public class SwingApplication extends ReadExcelDataImpl {
 
 		Process_test_script.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					if (e.getActionCommand().equals("Process test script")) {
-						try {
-							input_file_path = fileChooser_Inputpath
-									.getSelectedFile().getAbsolutePath();
-							if (input_file_path == null) {
-								throw new RallyUploaderException(
-										ResultStatusConstants.FILE_NOT_FOUND_ERROR,
-										Constants.input_file_not_present);
-							}
-						} catch (RallyUploaderException ex) {
-							logger.error(ex);
-							ExceptionHandler.main(ex.toString());
-						}
-						ProgressMonitoring.main(input_file_path);
-						Process_test_script.setEnabled(false);
-						ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
-						Map<Integer, String> maps = new LinkedHashMap<Integer, String>();
-						maps = readExcelDataImpl
-								.saveAlltestSceneiosdata(input_file_path);
-						try {
-							decriptive(maps, input_file_path);
-						} catch (RallyUploaderException e1) {
-							logger.error(e1);
-							ExceptionHandler.main(e1.toString());
-						}
-						Map<ExcelData, Object> data = new HashMap<ExcelData, Object>();
-						data = readExcelDataImpl.saveExceldata(input_file_path);
-						static_data.putAll(data);
-					}
-				} catch (Exception ex) {
-					logger.error(ex);
-					ex.printStackTrace();
-					ExceptionHandler.main(ex.toString());
+				if (e.getActionCommand().equals("Process test script")) {
+					showProgressMonitor();
+					ProcessExcelSheetData();
 				}
 			}
 		});
@@ -526,13 +494,12 @@ public class SwingApplication extends ReadExcelDataImpl {
 					try {
 						throw new RallyUploaderException(
 								ResultStatusConstants.FILE_NOT_FOUND_ERROR,
-								Constants.input_file_not_found);
+								Constants.input_file_not_present);
 					} catch (RallyUploaderException e2) {
 						logger.error(e2);
 						ExceptionHandler.main(e2.toString());
 					}
 				}
-				// if (input_file_path != null && output_file_path != null) {
 				try {
 					writeExcelHeader();
 					ProcessStaticdata(input_file_path);
@@ -549,6 +516,44 @@ public class SwingApplication extends ReadExcelDataImpl {
 			}
 		});
 
+	}
+	public void showProgressMonitor() {
+		try {
+			input_file_path = fileChooser_Inputpath.getSelectedFile()
+					.getAbsolutePath();
+		} catch (Exception e) {
+			try {
+				throw new RallyUploaderException(
+						ResultStatusConstants.FILE_NOT_FOUND_ERROR,
+						Constants.input_file_not_present);
+			} catch (RallyUploaderException ex) {
+				logger.error(ex);
+				ExceptionHandler.main(ex.toString());
+			}
+		}
+		Process_test_script.setEnabled(false);
+		ProgressMonitoring.main(input_file_path);	
+	}
+
+	public void ProcessExcelSheetData() {
+		ReadExcelDataImpl readExcelDataImpl = new ReadExcelDataImpl();
+		Map<Integer, String> maps = new LinkedHashMap<Integer, String>();
+		maps = readExcelDataImpl.saveAlltestSceneiosdata(input_file_path);
+		try {
+			decriptive(maps, input_file_path);
+		} catch (RallyUploaderException e1) {
+			logger.error(e1);
+			ExceptionHandler.main(e1.toString());
+		}
+		try {
+			Map<ExcelData, Object> data = new HashMap<ExcelData, Object>();
+			data = readExcelDataImpl.saveExceldata(input_file_path);
+			static_data.putAll(data);
+		} catch (Exception ex) {
+			logger.error(ex);
+			ex.printStackTrace();
+			ExceptionHandler.main(ex.toString());
+		}
 	}
 
 	public void ProcessStaticdata(String filename)
@@ -681,5 +686,6 @@ public class SwingApplication extends ReadExcelDataImpl {
 			objective_description++;
 		}
 	}
+	
 
 }
