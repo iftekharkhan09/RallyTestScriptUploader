@@ -484,7 +484,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 								Constants.output_file_not_present);
 					} catch (RallyUploaderException e2) {
 						logger.error(e2);
-						ExceptionHandler.main(e2.toString());
+						CaughtExceptionHandler.main(e2.toString());
 					}
 				}
 				try {
@@ -497,7 +497,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 								Constants.input_file_not_present);
 					} catch (RallyUploaderException e2) {
 						logger.error(e2);
-						ExceptionHandler.main(e2.toString());
+						CaughtExceptionHandler.main(e2.toString());
 					}
 				}
 				try {
@@ -528,7 +528,7 @@ public class SwingApplication extends ReadExcelDataImpl {
 						Constants.input_file_not_present);
 			} catch (RallyUploaderException ex) {
 				logger.error(ex);
-				ExceptionHandler.main(ex.toString());
+				CaughtExceptionHandler.main(ex.toString());
 			}
 		}
 		Process_test_script.setEnabled(false);

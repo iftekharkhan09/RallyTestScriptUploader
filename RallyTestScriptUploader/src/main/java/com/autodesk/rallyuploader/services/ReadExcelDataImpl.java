@@ -185,7 +185,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 						Constants.input_file_not_found);
 			} catch (RallyUploaderException e1) {
 				logger.error(e1);
-				ExceptionHandler.main(e1.toString());
+				CaughtExceptionHandler.main(e1.toString());
 			}
 		}
 		XSSFWorkbook myWorkBook = null;
@@ -315,7 +315,7 @@ public class ReadExcelDataImpl implements ReadExcelData {
 						Constants.input_file_not_found);
 			} catch (RallyUploaderException e) {
 				logger.error(e);
-				ExceptionHandler.main(e.toString());
+				CaughtExceptionHandler.main(e.toString());
 			}
 		return final_map;
 	}
