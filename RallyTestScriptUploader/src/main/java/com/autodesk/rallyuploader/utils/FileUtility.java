@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -16,8 +19,9 @@ public class FileUtility {
 	static Logger logger = Logger
 			.getLogger(com.autodesk.rallyuploader.utils.FileUtility.class);
 	private BufferedReader bufferedReader;
+
 	public String convertFileDataToString(String file) throws IOException {
-		 bufferedReader = new BufferedReader(new FileReader(file));
+		bufferedReader = new BufferedReader(new FileReader(file));
 		String line = null;
 		StringBuilder stringBuilder = new StringBuilder();
 		String ls = System.getProperty("line.separator");
@@ -27,14 +31,20 @@ public class FileUtility {
 		}
 		return stringBuilder.toString();
 	}
-	public String getPropertiesValue(String key, String filename) {
+
+	public String getPropertiesValue(String key, String filename) throws URISyntaxException {
 		try {
-			File file = new File(filename);
-			FileInputStream fileInput = new FileInputStream(file);
+			/*URL resource = ClassLoader.getSystemResource(filename);
+			File file = new File(resource.toURI());
+			FileInputStream fileInput = new FileInputStream(file);*/
+			//FileInputStream fileInput = new FileInputStream(in);
+			InputStream in=ClassLoader.getSystemResourceAsStream(filename);
+			
+			
 			Properties properties = new Properties();
-			properties.load(fileInput);
+			properties.load(in);
 			String value = properties.getProperty(key);
-			fileInput.close();
+			in.close();
 			return value;
 		} catch (FileNotFoundException e) {
 			logger.error("Unable to locate the properties file - " + e);

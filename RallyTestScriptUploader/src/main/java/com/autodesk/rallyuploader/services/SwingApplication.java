@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -100,11 +102,11 @@ public class SwingApplication extends ReadExcelDataImpl {
 		});
 	}
 
-	public SwingApplication() {
+	public SwingApplication() throws URISyntaxException {
 		initialize();
 	}
 
-	private void initialize() {
+	private void initialize() throws URISyntaxException {
 		monitoringLogProcesser = new MonitoringLogProcesser();
 		monitoringLogProcesser.setLog4jProperties();
 		frame = new JFrame();
@@ -255,8 +257,10 @@ public class SwingApplication extends ReadExcelDataImpl {
 		// Label Alert_Label = new Label("New label");
 		BufferedImage myPicture = null;
 		try {
+			/*myPicture = ImageIO
+					.read(new File("src/main/resources/download.png"));*/
 			myPicture = ImageIO
-					.read(new File("src/main/resources/download.png"));
+					.read(ClassLoader.getSystemResource("download.png"));
 		} catch (IOException e2) {
 			logger.error(e2);
 		}

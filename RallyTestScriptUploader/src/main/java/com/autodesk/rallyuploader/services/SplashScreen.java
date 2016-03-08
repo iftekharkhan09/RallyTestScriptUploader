@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import com.autodesk.rallyuploader.utils.Constants;
+import com.sun.org.apache.bcel.internal.util.ClassLoader;
 
 public class SplashScreen extends JWindow {
   private int duration;
@@ -65,7 +66,9 @@ public class SplashScreen extends JWindow {
 	gbc_lblNewLabel_3.gridy = 3;
 	content.add(lblNewLabel_3, gbc_lblNewLabel_3);
 	
-	JLabel loading_image = new JLabel(new ImageIcon("src/main/resources/loading.gif"));
+	//JLabel loading_image = new JLabel(new ImageIcon("src/main/resources/loading.gif"));
+	JLabel loading_image = new JLabel(new ImageIcon(ClassLoader.getSystemResource("loading.gif")));
+	
 	GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
 	gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
 	gbc_lblNewLabel_4.gridx = 0;
