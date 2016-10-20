@@ -40,8 +40,8 @@ public class ExcelData {
 		return super.toString();
 	}
 
-	@Override
+	/*@Override
 	public boolean equals(Object arg0) {
 		return super.equals(arg0);
-	}
+	}*/
 }
